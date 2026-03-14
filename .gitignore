@@ -1,0 +1,12 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+flask_session/
+instance/
+*.db
+*.sqlite3
+venv/
+.venv/
+env/
