@@ -16,7 +16,10 @@ from flask import (
     Blueprint, send_from_directory,
     session, jsonify, request, current_app, abort,
 )
-from extensions import limiter
+from extensions import db, limiter
+from models import WeeklyPlan, UserProfile
+import datetime
+import json
 
 main_bp = Blueprint("main", __name__)
 
@@ -85,13 +88,44 @@ def docs(filename):
 @main_bp.route("/api/dashboard", methods=["GET"])
 @login_required
 def dashboard():
+    user_id = session.get("user_id")
+    
+    # 1. Fetch Weekly Plan
+    wp = WeeklyPlan.query.filter_by(user_id=user_id).first()
+    plan_data = {}
+    if wp and wp.plan_json:
+        try:
+            plan_data = json.loads(wp.plan_json)
+        except:
+            plan_data = {}
+
+    # 2. Calculate Streak
+    streak = 0
+    if plan_data:
+        DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        today_name = datetime.datetime.now().strftime("%A")
+        
+        try:
+            today_idx = DAYS.index(today_name)
+            # Reorder days to start from today and go backwards
+            # e.g. if today is Wed (2): [Wed, Tue, Mon, Sun, Sat, Fri, Thu]
+            check_days = [DAYS[(today_idx - i) % 7] for i in range(7)]
+            
+            for day in check_days:
+                if plan_data.get(day, {}).get("done") is True:
+                    streak += 1
+                else:
+                    break
+        except ValueError:
+            pass
+
     return jsonify({
         "success": True,
         "message": "Welcome to your MealMatrix dashboard!",
         "data": {
-            "plans":  [],
-            "streak": 0,
-            "tip":    "Start by setting up your weekly meal plan!",
+            "plans":  plan_data,
+            "streak": streak,
+            "tip":    "Keep up the great work and stay consistent!",
         },
     })
 

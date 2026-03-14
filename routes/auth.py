@@ -706,6 +706,9 @@ def achievements():
         return error
 
     DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    import datetime
+    today_name = datetime.datetime.now().strftime("%A")
+    streak = 0
 
     wp   = WeeklyPlan.query.filter_by(user_id=user_id).first()
     plan = {}
@@ -714,6 +717,19 @@ def achievements():
             plan = _json.loads(wp.plan_json)
         except Exception:
             plan = {}
+
+    # Calculate streak logic (backwards from today)
+    if plan:
+        try:
+            today_idx = DAYS.index(today_name)
+            check_days = [DAYS[(today_idx - i) % 7] for i in range(7)]
+            for d in check_days:
+                if plan.get(d, {}).get("done") is True:
+                    streak += 1
+                else:
+                    break
+        except:
+            pass
 
     # Calculate macro-specific percentages (Issue 1 fix)
     total_days = 7
@@ -756,6 +772,7 @@ def achievements():
         "fat_pct":     fat_pct,
         "done_days":   done_days,
         "weekly_data": weekly_data,
+        "streak":      streak,
         "kcal":        profile.kcal      if profile else 2000,
         "protein":     profile.protein_g if profile else 150,
         "carbs":       profile.carbs_g   if profile else 150,
