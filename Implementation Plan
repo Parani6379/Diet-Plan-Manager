@@ -1,0 +1,284 @@
+═══════════════════════════════════════════════════════════════════
+           MEALMATRIX – FULL IMPLEMENTATION PLAN
+           Fixes: Dashboard, OTP Auto-Fetch, Frontend-Backend
+           Linking, Auth Flow, API Connections
+═══════════════════════════════════════════════════════════════════
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ISSUE 1 — DASHBOARD SHOWING INCORRECT / HARDCODED VALUES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ROOT CAUSE:
+  - /auth/achievements returns same done_pct for all 4 macros
+    (kcal_pct, protein_pct, carbs_pct, fat_pct)
+  - /api/dashboard returns hardcoded plans:[], streak:0 always
+  - dashboard.html JS does not read individual macro values
+
+FILES TO CHANGE:
+  1. backend/routes/auth.py  →  achievements() function
+  2. backend/routes/main.py  →  dashboard() function
+  3. pages/dashboard.html    →  JS fetch + chart rendering
+
+EXACT FIXES:
+
+  [auth.py – achievements()]
+  - Map each check key in weekly plan to its macro category:
+      breakfast checks  → carbs_pct  (energy/carb-heavy meals)
+      lunch checks      → protein_pct
+      dinner checks     → fat_pct
+      overall done days → kcal_pct
+  - Calculate each percentage independently:
+      kcal_pct    = (days_with_any_meal_done / 7) * 100
+      protein_pct = (lunch_checks_ticked / total_lunch_checks) * 100
+      carbs_pct   = (breakfast_checks_ticked / total_breakfast) * 100
+      fat_pct     = (dinner_checks_ticked / total_dinner) * 100
+  - weekly_data[] must reflect per-day completion % (already correct)
+  - Return real profile values, not fallback defaults when profile exists
+
+  [main.py – dashboard()]
+  - Import WeeklyPlan, UserProfile models
+  - Call the same logic as achievements() — do NOT duplicate, import helper
+  - Return real streak count (consecutive done days from Sunday backwards)
+  - Return real plans list from weekly_plan.plan_json
+
+  [dashboard.html – JS]
+  - Read response.kcal_pct, protein_pct, carbs_pct, fat_pct separately
+  - Update each progress ring with its own value
+  - Update each bar in the weekly bar chart with weekly_data[i]
+  - Show real kcal / protein / carbs / fat targets from response
+  - Display done_days list as badges or checkmarks on day labels
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ISSUE 2 — OTP NOT AUTO-FILLED IN DEVELOPMENT MODE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ROOT CAUSE:
+  - Backend already returns dev_otp in JSON when DEBUG=True
+  - Frontend register.html / login.html ignores dev_otp in response
+  - User has to manually type the OTP shown in server logs
+
+FILES TO CHANGE:
+  1. pages/register.html  →  register + verify JS section
+  2. pages/login.html     →  verify JS section (if OTP step exists)
+
+EXACT FIXES:
+
+  [register.html]
+  - After POST /auth/register/email or /auth/register/phone succeeds:
+      const data = await response.json()
+      if (data.dev_otp) {
+        document.querySelector('#otp-input').value = data.dev_otp
+        // Optional: auto-submit after 500ms delay so user sees it
+        setTimeout(() => document.querySelector('#verify-btn').click(), 600)
+      }
+  - Show a small yellow dev banner: "Dev mode: OTP auto-filled → {code}"
+  - This banner must only render when dev_otp field exists in response
+
+  [resend OTP button]
+  - Same logic: after POST /auth/resend-otp, auto-fill if dev_otp present
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ISSUE 3 — FRONTEND ↔ BACKEND API CONNECTIONS BROKEN/MISSING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ROOT CAUSE:
+  - Several HTML pages do not call their corresponding API endpoints
+  - fetch() calls missing credentials:'include' (session cookie not sent)
+  - Some pages use hardcoded http://localhost:5000 absolute URLs
+  - Pages do not check session on load → no redirect to login if unauth
+
+FILES TO CHANGE:
+  Every HTML page listed below + src/auth-header.js
+
+PAGE-BY-PAGE FIX LIST:
+
+  [dashboard.html]
+  - On load: fetch('GET /auth/me', {credentials:'include'})
+      → if 401: redirect to /pages/login.html
+      → if ok: fetch('GET /auth/achievements', {credentials:'include'})
+  - Render all 4 macro rings + bar chart from real API data
+  - Show username from /auth/me response in header pill
+
+  [home.html]
+  - On load: fetch('GET /auth/me', {credentials:'include'})
+      → if ok: show "Welcome back, {username}!" greeting
+      → if 401: show generic non-personalized version (home is public)
+  - Fix all nav <a href> links to use /pages/dashboard.html etc.
+  - Newsletter form → POST /api/subscribe-newsletter with credentials
+
+  [body-needs.html]
+  - On load: fetch('GET /auth/me') → redirect if 401
+  - Then: fetch('GET /auth/body-needs', {credentials:'include'})
+      → populate kcal, protein, carbs, fat display elements with real data
+      → if 404 (no profile yet): show message "Complete your profile first"
+      → add link to /pages/profile.html
+
+  [profile.html]
+  - On load: fetch('GET /auth/me') → redirect if 401
+  - Then: fetch('GET /auth/profile', {credentials:'include'})
+      → pre-fill all form fields (name, age, gender, weight, height, diet)
+      → if no profile: leave form empty for first-time entry
+  - On submit: POST /auth/profile with form data as JSON
+      → on success: redirect to /pages/body-needs.html
+      → show inline success/error message
+
+  [meal-selection.html]
+  - On load: fetch('GET /auth/me') → redirect if 401
+  - Then: fetch('GET /auth/meal-preferences', {credentials:'include'})
+      → restore previously selected meal checkboxes/cards
+  - On save button: POST /auth/meal-preferences with {meals:[], categories:{}}
+      → on success: redirect to /pages/weekly-plan.html
+
+  [weekly-plan.html]
+  - On load: fetch('GET /auth/me') → redirect if 401
+  - Then: fetch('GET /auth/weekly-plan', {credentials:'include'})
+      → restore all checkbox states for each day from plan JSON
+  - On every checkbox change: auto-save via POST /auth/weekly-plan
+      → debounce 800ms to avoid flooding server
+  - Mark day as done when all checks in that day are ticked
+
+  [your-plan.html]
+  - On load: fetch both /auth/profile AND /auth/meal-preferences in parallel
+      → Promise.all([fetch profile, fetch meal prefs])
+      → display diet type, macro targets, and selected meals together
+  - If no profile: show "Set up your profile first" with link
+
+  [plans.html]
+  - If page lists available plans: no auth required (public)
+  - If page shows user's current plan: fetch /auth/weekly-plan
+  - Fix any broken href links in plan cards
+
+  [about.html / help.html]
+  - Public pages — no auth check needed
+  - Fix nav links to use correct /pages/ relative paths
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ISSUE 4 — AUTH FLOW INCOMPLETE (LOGIN / REGISTER / LOGOUT)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ROOT CAUSE:
+  - After login success, no redirect happens
+  - After OTP verify, no redirect to correct next page
+  - Logout button does not call /auth/logout API
+  - Already-logged-in users can still visit login/register pages
+
+FILES TO CHANGE:
+  1. pages/login.html
+  2. pages/register.html
+  3. src/auth-header.js
+
+EXACT FIXES:
+
+  [login.html]
+  - On page load: fetch GET /auth/me
+      → if 200 (already logged in): redirect to /pages/home.html
+  - POST /auth/login on form submit:
+      → on success (200): redirect to /pages/home.html
+      → on 403 (unverified): show OTP input step, don't redirect yet
+      → on 401: show "Incorrect email/phone or password."
+  - All fetch calls must use relative URL /auth/login (not localhost)
+  - Include credentials: 'include' in all fetch calls
+
+  [register.html]
+  - On page load: fetch GET /auth/me
+      → if 200 (already logged in): redirect to /pages/home.html
+  - After POST /auth/register/email or /auth/register/phone succeeds:
+      → show OTP step / OTP input field
+      → auto-fill OTP if dev_otp present in response (see Issue 2)
+  - After POST /auth/verify/email or /auth/verify/phone succeeds:
+      → fetch GET /auth/profile to check if profile exists
+      → if no profile: redirect to /pages/body-needs.html
+      → if profile exists: redirect to /pages/home.html
+
+  [auth-header.js]
+  - Must be included in every protected page via <script src="/src/auth-header.js">
+  - On load: fetch GET /auth/me with credentials:'include'
+      → if 401: redirect to /pages/login.html
+      → if ok: populate header username element with user.username or email
+  - Logout button (id="logout-btn") click handler:
+      → POST /auth/logout with credentials:'include'
+      → on success: redirect to /pages/login.html
+  - Nav links must be dynamically set to correct /pages/* paths
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ISSUE 5 — GENERAL FIXES (ALL FILES)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  [fetch() URL fixes — all HTML files]
+  - Replace ALL instances of:
+      http://localhost:5000/auth/...   →  /auth/...
+      http://127.0.0.1:5000/auth/...  →  /auth/...
+      http://localhost:5000/api/...    →  /api/...
+  - Add credentials: 'include' to every fetch() call site-wide
+
+  [Error handling — all forms]
+  - Show user-friendly inline error messages (not console.log only)
+  - Add loading spinner / disable submit button while request is in flight
+  - Re-enable button and show error on failure
+
+  [Navigation hrefs — all HTML files]
+  - Audit every <a href="..."> in headers and navbars
+  - Fix broken paths — all internal links must use format:
+      /pages/dashboard.html
+      /pages/home.html
+      /pages/profile.html
+      /pages/login.html
+      /  (for index/landing)
+  - Remove any href="#" placeholders that should be real links
+
+  [Session / cookie issues]
+  - Ensure Flask config has SESSION_COOKIE_SAMESITE = "Lax"
+  - Ensure SESSION_COOKIE_HTTPONLY = True
+  - Check config.py has correct SECRET_KEY loaded from .env
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+COMPLETE FILE CHANGE CHECKLIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  BACKEND:
+  [ ] backend/routes/auth.py      — Fix achievements(), add real macro math
+  [ ] backend/routes/main.py      — Fix dashboard() to return real data
+  [ ] backend/config.py           — Verify SESSION_COOKIE settings
+
+  FRONTEND PAGES:
+  [ ] pages/dashboard.html        — Fetch /auth/achievements, render rings
+  [ ] pages/home.html             — Fetch /auth/me, fix nav hrefs
+  [ ] pages/login.html            — Auth check on load, redirect on success
+  [ ] pages/register.html         — OTP auto-fill, redirect after verify
+  [ ] pages/profile.html          — GET pre-fill, POST save, redirect
+  [ ] pages/body-needs.html       — Fetch /auth/body-needs, show macros
+  [ ] pages/meal-selection.html   — GET restore, POST save selections
+  [ ] pages/weekly-plan.html      — GET restore checks, auto-save on change
+  [ ] pages/your-plan.html        — Parallel fetch profile + meal-prefs
+  [ ] pages/plans.html            — Fix nav links
+  [ ] pages/about.html            — Fix nav links
+  [ ] pages/help.html             — Fix nav links
+
+  SHARED JS:
+  [ ] src/auth-header.js          — Auth check, logout handler, nav links
+  [ ] src/script.js               — Fix any absolute URLs
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RECOMMENDED IMPLEMENTATION ORDER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Step 1 → Fix auth-header.js (used by every page)
+  Step 2 → Fix login.html + register.html (OTP auto-fill + redirects)
+  Step 3 → Fix auth.py achievements() (dashboard depends on this)
+  Step 4 → Fix dashboard.html (reads from fixed achievements endpoint)
+  Step 5 → Fix profile.html + body-needs.html (user setup flow)
+  Step 6 → Fix meal-selection.html + weekly-plan.html + your-plan.html
+  Step 7 → Fix home.html + nav links on remaining pages
+  Step 8 → Fix main.py dashboard() + config.py session settings
+  Step 9 → Global pass: replace all localhost URLs, add credentials
+
+═══════════════════════════════════════════════════════════════════
+  END OF IMPLEMENTATION PLAN
+  Project: MealMatrix  |  Stack: Flask + HTML/JS  |  Pages: 13
+═══════════════════════════════════════════════════════════════════

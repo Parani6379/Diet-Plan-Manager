@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weekly Plan – MealMatrix</title>
+    <meta name="description" content="Track your weekly meal plan progress on MealMatrix." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #e7ecf3;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ── Header ── */
+        .mm-header {
+            height: 64px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 36px;
+            box-shadow: 0 1px 0 #e5e7eb;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .mm-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #1f2933;
+        }
+
+        .mm-logo-dot {
+            position: relative;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 20%, #b1f4cf, #22c55e);
+            box-shadow: 0 2px 10px rgba(34, 197, 94, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .mm-logo-dot::after {
+            content: 'MM';
+            position: absolute;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 0.62rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -0.03em;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .mm-user-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .mm-user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f59e0b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        /* ── Layout ── */
+        .mm-layout {
+            display: flex;
+            flex: 1;
+        }
+
+        /* ── Sidebar ── */
+        .mm-sidebar {
+            width: 160px;
+            background: #fff;
+            border-right: 1px solid #e5e7eb;
+            flex-shrink: 0;
+            padding-top: 16px;
+        }
+
+        .mm-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 18px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #374151;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            transition: background 0.15s;
+            border-left: 3px solid transparent;
+        }
+
+        .mm-nav-item:hover {
+            background: #f3f4f6;
+        }
+
+        .mm-nav-item.active {
+            background: #d1fae5;
+            border-left-color: #22c55e;
+            color: #166534;
+        }
+
+        .mm-nav-icon {
+            font-size: 1rem;
+        }
+
+        /* ── Main ── */
+        .mm-main {
+            flex: 1;
+            padding: 28px 32px;
+            overflow-y: auto;
+        }
+
+        /* ── Days grid + nutrition panel ── */
+        .weekly-layout {
+            display: grid;
+            grid-template-columns: 1fr 260px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        /* ── Days grid ── */
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+
+        /* ── Day Card ── */
+        .day-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .day-card-header {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #1f2933;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+        }
+
+        .day-meal-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+            color: #374151;
+            cursor: pointer;
+        }
+
+        .day-meal-check input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            accent-color: #22c55e;
+            cursor: pointer;
+        }
+
+        .day-done-btn {
+            width: 100%;
+            margin-top: 12px;
+            padding: 8px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: opacity .15s;
+        }
+
+        .day-done-btn:hover {
+            opacity: 0.85;
+        }
+
+        .day-done-btn.done {
+            background: #d1fae5;
+            color: #166534;
+        }
+
+        /* ── Nutrition Summary Card ── */
+        .nutrition-summary {
+            background: #fff;
+            border-radius: 16px;
+            padding: 22px 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .nutrition-summary h2 {
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #1f2933;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .ns-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 0.85rem;
+        }
+
+        .ns-row:last-child {
+            border-bottom: none;
+        }
+
+        .ns-label {
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .ns-value {
+            color: #166534;
+            font-weight: 700;
+        }
+
+        /* ── Submit ── */
+        .submit-wrap {
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .submit-btn {
+            padding: 14px 72px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 8px 28px rgba(34, 197, 94, 0.45);
+            transition: transform .15s, box-shadow .15s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 36px rgba(34, 197, 94, 0.55);
+        }
+
+        .msg {
+            text-align: center;
+            font-size: 0.82rem;
+            margin-top: 12px;
+            min-height: 18px;
+        }
+
+        .msg.ok {
+            color: #16a34a;
+        }
+
+        .msg.err {
+            color: #dc2626;
+        }
+
+        /* ── Next Week button ── */
+        .next-week-wrap {
+            display: none;
+            /* shown only when all 7 days done */
+            margin-top: 14px;
+            text-align: center;
+        }
+
+        .next-week-btn {
+            padding: 13px 48px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+            transition: transform .15s, box-shadow .15s;
+        }
+
+        .next-week-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(99, 102, 241, 0.5);
+        }
+
+        .week-label {
+            text-align: center;
+            font-size: 0.78rem;
+            color: #9ca3af;
+            font-weight: 600;
+            margin-bottom: 18px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 1000px) {
+            .days-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .weekly-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .days-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mm-main {
+                padding: 16px;
+            }
+
+            .mm-sidebar {
+                width: 56px;
+            }
+
+            .mm-nav-item span:not(.mm-nav-icon) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="mm-header">
+        <a href="/" class="mm-logo">
+            <div class="mm-logo-dot"></div>
+            MealMatrix
+        </a>
+        <div class="mm-user-pill">
+            <span id="header-username">VIJAYARAMANAN</span>
+            <div class="mm-user-avatar">👤</div>
+        </div>
+    </header>
+
+    <div class="mm-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="mm-sidebar">
+            <a href="/pages/home.html" class="mm-nav-item">
+                <span class="mm-nav-icon">🏠</span><span>Home</span>
+            </a>
+            <a href="/pages/dashboard.html" class="mm-nav-item">
+                <span class="mm-nav-icon">📊</span><span>Dashboard</span>
+            </a>
+            <a href="/pages/weekly-plan.html" class="mm-nav-item active">
+                <span class="mm-nav-icon">📅</span><span>Weekly Plan</span>
+            </a>
+            <a href="/pages/profile.html" class="mm-nav-item">
+                <span class="mm-nav-icon">👤</span><span>Profile</span>
+            </a>
+            <a href="#" class="mm-nav-item" onclick="handleLogout(event)">
+                <span class="mm-nav-icon">🚪</span><span>Log Out</span>
+            </a>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="mm-main">
+
+            <div class="weekly-layout">
+
+                <!-- Days grid -->
+                <div>
+                    <div class="week-label" id="week-label">Week 1</div>
+                    <div class="days-grid" id="days-grid">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div class="submit-wrap">
+                        <button class="submit-btn" onclick="submitWeeklyPlan()">SUBMIT WEEKLY PLAN</button>
+                        <p class="msg" id="submit-msg"></p>
+                    </div>
+                    <div class="next-week-wrap" id="next-week-wrap">
+                        <button class="next-week-btn" onclick="startNextWeek()">📅 Start Next Week
+                        </button>
+                    </div>
+                </div>
+
+                <div class="nutrition-summary">
+                    <h2>Weekly Nutrition</h2>
+                    <div class="ns-row"><span class="ns-label">Kcal</span><span class="ns-value" id="ns-kcal">— /
+                            day</span></div>
+                    <div class="ns-row"><span class="ns-label">Protein</span><span class="ns-value" id="ns-protein">— /
+                            day</span></div>
+                    <div class="ns-row"><span class="ns-label">Carbs</span><span class="ns-value" id="ns-carbs">— /
+                            day</span></div>
+                    <div class="ns-row"><span class="ns-label">Fat</span><span class="ns-value" id="ns-fat">— /
+                            day</span></div>
+                    <div class="ns-row"><span class="ns-label">Days Done</span><span class="ns-value" id="ns-days">0 /
+                            7</span></div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script src="/src/auth-header.js" data-protected="true"></script>
+    <script>
+        (() => {
+            const API = (window.MealMatrix && window.MealMatrix.apiBase) || "";
+            const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+            const MEALS = ["Breakfast", "Lunch", "Dinner", "Snacks"];
+
+            // In-memory state — always synced to DB
+            const dayState = {};
+            DAYS.forEach(d => {
+                dayState[d] = { done: false, checks: {} };
+                MEALS.forEach(m => { dayState[d].checks[m] = false; });
+            });
+
+            // ── Persist to backend ──────────────────────────────────────────────
+            let saveTimer = null;
+            function scheduleSave() {
+                clearTimeout(saveTimer);
+                saveTimer = setTimeout(persistPlan, 600);   // debounce 600ms
+            }
+
+            async function persistPlan() {
+                try {
+                    await fetch(`${API}/auth/weekly-plan`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: "include",
+                        body: JSON.stringify({ plan: dayState }),
+                    });
+                } catch { /* offline — will retry next interaction */ }
+            }
+
+            // ── Restore from backend ────────────────────────────────────────────
+            async function loadPlan() {
+                try {
+                    const res = await window.MealMatrix.fetchWithRetry(`${API}/auth/weekly-plan`, { credentials: "include" });
+                    if (!res || !res.ok) return;
+                    const { plan } = await res.json();
+                    if (!plan || !Object.keys(plan).length) return;
+
+                    DAYS.forEach(d => {
+                        if (!plan[d]) return;
+                        // Restore checks
+                        MEALS.forEach(m => {
+                            const saved = plan[d].checks?.[m] || plan[d].checks?.[m.toLowerCase()] || false;
+                            dayState[d].checks[m] = saved;
+                            const chk = document.getElementById(`chk-${d}-${m}`);
+                            if (chk) chk.checked = saved;
+                        });
+                        // Restore done
+                        if (plan[d].done) {
+                            dayState[d].done = true;
+                            applyDone(d);
+                        }
+                    });
+                    updateNutritionSummary();
+                    checkAllDone();   // show "Start Next Week" if week was already complete
+                } catch { /* no saved plan yet */ }
+            }
+
+            // ── UI Helpers ──────────────────────────────────────────────────────
+            function applyDone(day) {
+                const btn = document.getElementById(`done-${day}`);
+                if (!btn) return;
+                btn.textContent = "✓ Done";
+                btn.classList.add("done");
+                MEALS.forEach(m => {
+                    const chk = document.getElementById(`chk-${day}-${m}`);
+                    if (chk) chk.disabled = true;
+                });
+            }
+
+            function buildDayCard(day) {
+                const card = document.createElement("div");
+                card.className = "day-card";
+                card.id = `card-${day}`;
+                let checksHtml = MEALS.map(meal => `
+                    <label class="day-meal-check" for="chk-${day}-${meal}">
+                        <input type="checkbox" id="chk-${day}-${meal}"
+                            onchange="window.onCheck('${day}','${meal}',this.checked)" />
+                        ${meal}
+                    </label>
+                `).join("");
+                card.innerHTML = `
+                    <div class="day-card-header">${day}</div>
+                    ${checksHtml}
+                    <button class="day-done-btn" id="done-${day}" onclick="window.markDone('${day}')">DONE</button>
+                `;
+                return card;
+            }
+
+            window.onCheck = function(day, meal, checked) {
+                dayState[day].checks[meal] = checked;
+                scheduleSave();             // auto-save to DB
+            };
+
+            window.markDone = function(day) {
+                dayState[day].done = true;
+                applyDone(day);
+                updateNutritionSummary();
+                checkAllDone();             // show "Start Next Week" when all done
+                persistPlan();              // immediate save on DONE
+            };
+
+            function updateNutritionSummary() {
+                const doneDays = DAYS.filter(d => dayState[d].done).length;
+                const el = document.getElementById("ns-days");
+                if (el) el.textContent = `${doneDays} / 7`;
+            }
+
+            // ── Submit ──────────────────────────────────────────────────────────
+            window.submitWeeklyPlan = async function() {
+                const msg = document.getElementById("submit-msg");
+                msg.className = "msg";
+                msg.textContent = "Saving…";
+                await persistPlan();
+                msg.textContent = "Weekly plan saved! Redirecting to dashboard…";
+                msg.className = "msg ok";
+                setTimeout(() => { window.location.href = "/pages/dashboard.html"; }, 1000);
+            };
+
+            // ── Next Week ────────────────────────────────────────────────────────
+            function checkAllDone() {
+                const allDone = DAYS.every(d => dayState[d].done);
+                const wrap = document.getElementById("next-week-wrap");
+                if (wrap) wrap.style.display = allDone ? "block" : "none";
+            }
+
+            window.startNextWeek = async function() {
+                if (!confirm("Start a new week? This will clear all current checkboxes and progress.")) return;
+
+                // Increment week counter stored in localStorage
+                const newWeek = (parseInt(localStorage.getItem("mm_week") || "1")) + 1;
+                localStorage.setItem("mm_week", newWeek);
+
+                // Reset state
+                DAYS.forEach(d => {
+                    dayState[d] = { done: false, checks: {} };
+                    MEALS.forEach(m => { dayState[d].checks[m] = false; });
+                });
+
+                // Save cleared plan to DB
+                await persistPlan();
+
+                // Rebuild the UI
+                const grid = document.getElementById("days-grid");
+                grid.innerHTML = "";
+                DAYS.forEach(d => grid.appendChild(buildDayCard(d)));
+                updateNutritionSummary();
+                document.getElementById("next-week-wrap").style.display = "none";
+                document.getElementById("submit-msg").textContent = "";
+                document.getElementById("week-label").textContent = `Week ${newWeek}`;
+
+                const msg = document.getElementById("submit-msg");
+                msg.textContent = `✅ Week ${newWeek} started! Good luck!`;
+                msg.className = "msg ok";
+                setTimeout(() => { msg.textContent = ""; }, 3000);
+            };
+
+            async function loadData() {
+                // Load personalised nutrition targets into the side panel
+                try {
+                    const nr = await window.MealMatrix.fetchWithRetry(`${API}/auth/body-needs`, { credentials: "include" });
+                    if (nr && nr.ok) {
+                        const n = await nr.json();
+                        document.getElementById("ns-kcal").textContent = `${n.kcal ?? 2000} / day`;
+                        document.getElementById("ns-protein").textContent = `${n.protein ?? 150}g / day`;
+                        document.getElementById("ns-carbs").textContent = `${n.carbs ?? 150}g / day`;
+                        document.getElementById("ns-fat").textContent = `${n.fat ?? 50}g / day`;
+                    }
+                } catch { /* no profile yet */ }
+                
+                loadPlan();
+            }
+
+            // ── Boot ────────────────────────────────────────────────────────────
+            const weekNum = parseInt(localStorage.getItem("mm_week") || "1");
+            document.getElementById("week-label").textContent = `Week ${weekNum}`;
+            const grid = document.getElementById("days-grid");
+            DAYS.forEach(d => grid.appendChild(buildDayCard(d)));
+
+            loadData();
+        })();
+    </script>
+</body>
+
+</html>

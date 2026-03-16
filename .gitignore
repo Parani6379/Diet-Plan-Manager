@@ -1,0 +1,88 @@
+# ─── MealMatrix – Git Ignore ─────────────────────────────────────────────────
+
+# ── OS Files ────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+ehthumbs.db
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# ── IDE & Editor ─────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.sublime-project
+.sublime-workspace
+*.code-workspace
+
+# ── Environment Variables ────────────────────────────────────────────────────
+# NEVER commit .env — it contains real secrets
+.env
+.env.local
+.env.*.local
+
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# ── Flask / App Runtime ──────────────────────────────────────────────────────
+# Server-side sessions (filesystem storage — user-specific, not source code)
+backend/flask_session/*
+!backend/flask_session/.gitkeep
+
+# SQLite database files (regenerated from migrations/create_all)
+backend/instance/*.db
+backend/instance/*.sqlite3
+!backend/instance/.gitkeep
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/
+npm-debug.log*
+
+# ── Frontend Build Artifacts ─────────────────────────────────────────────────
+node_modules/
+package-lock.json
+yarn.lock
+
+# ── Temporary Files ──────────────────────────────────────────────────────────
+*.tmp
+*.bak
+*.backup
+.cache/
+.temp/
+tmp/
+/tmp/
+
+# ── Testing ──────────────────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+.pytest_cache/
+htmlcov/
+
+# ── Compiled / Binary ────────────────────────────────────────────────────────
+*.class
+*.o
+*.out
+*.so
+*.dll

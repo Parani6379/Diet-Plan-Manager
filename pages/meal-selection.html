@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meal Selection – MealMatrix</title>
+    <meta name="description"
+        content="Choose your preferred meals for breakfast, lunch, dinner and snacks on MealMatrix." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #e7ecf3;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ── Header ── */
+        .mm-header {
+            height: 64px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 36px;
+            box-shadow: 0 1px 0 #e5e7eb;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .mm-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #1f2933;
+        }
+
+        .mm-logo-dot {
+            position: relative;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 20%, #b1f4cf, #22c55e);
+            box-shadow: 0 2px 10px rgba(34, 197, 94, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .mm-logo-dot::after {
+            content: 'MM';
+            position: absolute;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 0.62rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -0.03em;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .mm-user-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .mm-user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f59e0b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        /* ── Page ── */
+        .page-content {
+            flex: 1;
+            padding: 32px 48px 48px;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-tagline {
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1f2933;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 36px;
+        }
+
+        /* ── Category Section ── */
+        .meal-section {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: box-shadow .2s;
+        }
+
+        .meal-section.done {
+            box-shadow: 0 2px 10px rgba(34, 197, 94, 0.2);
+        }
+
+        /* ── Category Header (clickable) ── */
+        .cat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            cursor: pointer;
+            user-select: none;
+            transition: background .15s;
+        }
+
+        .cat-header:hover {
+            background: #f9fafb;
+        }
+
+        .cat-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cat-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #1f2933;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .cat-counter {
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: #f3f4f6;
+            color: #6b7280;
+            transition: background .2s, color .2s;
+        }
+
+        .cat-counter.done-badge {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .cat-done-check {
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity .2s;
+        }
+
+        .meal-section.done .cat-done-check {
+            opacity: 1;
+        }
+
+        /* Collapsed thumbnail strip */
+        .cat-thumbs {
+            display: none;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .meal-section.collapsed .cat-thumbs {
+            display: flex;
+        }
+
+        .cat-thumb {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #22c55e;
+            flex-shrink: 0;
+        }
+
+        .cat-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .cat-toggle-icon {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            transition: transform .25s;
+            flex-shrink: 0;
+        }
+
+        .meal-section.collapsed .cat-toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        /* ── Grid (collapsible body) ── */
+        .cat-body {
+            max-height: 600px;
+            overflow: hidden;
+            transition: max-height .35s ease, padding .35s ease;
+            padding: 0 24px 24px;
+        }
+
+        .meal-section.collapsed .cat-body {
+            max-height: 0;
+            padding: 0 24px;
+        }
+
+        .meal-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        /* ── Food Card ── */
+        .food-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform .15s;
+        }
+
+        .food-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .food-card input[type="checkbox"] {
+            display: none;
+        }
+
+        .food-img-wrap {
+            width: 100%;
+            aspect-ratio: 1.05;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #d1d5db;
+            border: 3px solid transparent;
+            transition: border-color .15s, box-shadow .15s;
+        }
+
+        .food-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Selected state */
+        .food-card.selected .food-img-wrap {
+            border-color: #22c55e;
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.22);
+        }
+
+        /* Checkmark badge */
+        .chk-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #22c55e;
+            color: #fff;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: opacity .15s, transform .15s;
+            pointer-events: none;
+            font-weight: 900;
+        }
+
+        .food-card.selected .chk-badge {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Dimmed when category is full and this card isn't selected */
+        .food-card.dimmed {
+            opacity: 0.38;
+            cursor: not-allowed;
+        }
+
+        .food-card.dimmed:hover {
+            transform: none;
+        }
+
+        .food-name {
+            font-size: 0.78rem;
+            font-style: italic;
+            color: #374151;
+            text-align: center;
+            line-height: 1.35;
+        }
+
+        /* ── Bottom bar ── */
+        .bottom-bar {
+            text-align: center;
+            padding: 8px 0 40px;
+        }
+
+        .global-counter {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 14px;
+        }
+
+        .global-counter strong {
+            color: #1f2933;
+        }
+
+        .save-btn {
+            padding: 14px 68px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 8px 28px rgba(34, 197, 94, 0.45);
+            transition: transform .15s, box-shadow .15s;
+        }
+
+        .save-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 36px rgba(34, 197, 94, 0.55);
+        }
+
+        .save-btn:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .success-banner {
+            display: none;
+            margin-top: 18px;
+        }
+
+        .success-banner p {
+            color: #16a34a;
+            font-weight: 700;
+            font-size: 0.88rem;
+            margin-bottom: 12px;
+        }
+
+        .success-banner a {
+            display: inline-block;
+            padding: 11px 48px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            box-shadow: 0 6px 20px rgba(34, 197, 94, .4);
+            text-decoration: none;
+        }
+
+        @media (max-width: 900px) {
+            .meal-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .page-content {
+                padding: 24px 20px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .meal-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="mm-header">
+        <a href="/" class="mm-logo">
+            <div class="mm-logo-dot"></div>
+            MealMatrix
+        </a>
+        <div class="mm-user-pill">
+            <span id="header-username">USER</span>
+            <div class="mm-user-avatar">👤</div>
+        </div>
+    </header>
+
+    <div class="page-content">
+        <p class="page-tagline" id="page-tagline">Choose Your Meal Preferences</p>
+        <p class="page-subtitle">Select exactly 3 meals per category (12 total) to generate your weekly plan.</p>
+
+        <!-- Categories rendered by JS -->
+        <div id="categories-container"></div>
+
+        <div class="bottom-bar">
+            <p class="global-counter" id="global-counter">
+                <strong>0 / 12</strong> meals selected (0 categories complete)
+            </p>
+            <button class="save-btn" id="btn-save" onclick="saveSelections()" disabled>
+                GENERATE PLAN
+            </button>
+            <div class="success-banner" id="success-banner">
+                <p>✅ Saved! You can adjust selections and save again anytime.</p>
+                <a href="/pages/your-plan.html">View Your Plan →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/src/auth-header.js" data-protected="true"></script>
+    <script>
+        (() => {
+            const API = (window.MealMatrix && window.MealMatrix.apiBase) || "";
+            const BASE_IMG = "/src/img/meals/";
+            const CAT_LIMIT = 3;                        // selections required per category
+            const CATEGORIES = ["breakfast", "lunch", "dinner", "snacks"];
+
+            const MEALS = {
+                breakfast: [
+                    { id: "oatmeal_berries", name: "Oatmeal with Berries", img: "oatmeal_berries.png" },
+                    { id: "avocado_toast", name: "Avocado Toast with Egg", img: "avocado_toast.png" },
+                    { id: "greek_yogurt", name: "Greek Yogurt with Fruits", img: "greek_yogurt.png" },
+                    { id: "smoothie", name: "Banana PB Smoothie", img: "smoothie.png" },
+                ],
+                lunch: [
+                    { id: "chicken_salad", name: "Grilled Chicken Salad", img: "chicken_salad.png" },
+                    { id: "quinoa_bowl", name: "Quinoa Vegetable Bowl", img: "quinoa_bowl.png" },
+                    { id: "brown_rice_chicken", name: "Brown Rice with Chicken", img: "brown_rice_chicken.png" },
+                    { id: "veggie_wrap", name: "Veggie Wrap", img: "veggie_wrap.png" },
+                ],
+                dinner: [
+                    { id: "salmon_veggies", name: "Grilled Salmon & Vegetables", img: "salmon_veggies.png" },
+                    { id: "stir_fry", name: "Chicken Stir Fry", img: "stir_fry.png" },
+                    { id: "tofu_bowl", name: "Tofu Vegetable Bowl", img: "tofu_bowl.png" },
+                    { id: "buddha_bowl", name: "Healthy Buddha Bowl", img: "buddha_bowl.png" },
+                ],
+                snacks: [
+                    { id: "mixed_nuts", name: "Mixed Nuts Bowl", img: "mixed_nuts.png" },
+                    { id: "mixed_nuts2", name: "Trail Mix", img: "mixed_nuts.png" },
+                    { id: "protein_balls", name: "Protein Energy Balls", img: "protein_balls.png" },
+                    { id: "yogurt_parfait", name: "Greek Yogurt Parfait", img: "yogurt_parfait.png" },
+                ],
+            };
+
+            // Per-category selection sets
+            const catSelected = {
+                breakfast: new Set(),
+                lunch: new Set(),
+                dinner: new Set(),
+                snacks: new Set(),
+            };
+
+            /* ─────────────────────────────────────────────────────────────────
+               Build the full category section (header + grid)
+            ───────────────────────────────────────────────────────────────── */
+            function buildCategory(cat) {
+                const label = cat.charAt(0).toUpperCase() + cat.slice(1);
+
+                const section = document.createElement("div");
+                section.className = "meal-section";
+                section.id = `section-${cat}`;
+
+                // Header
+                const header = document.createElement("div");
+                header.className = "cat-header";
+                header.setAttribute("role", "button");
+                header.setAttribute("aria-expanded", "true");
+                header.innerHTML = `
+                    <div class="cat-title-wrap">
+                        <span class="cat-name">${label}</span>
+                        <span class="cat-counter" id="counter-${cat}">0 / ${CAT_LIMIT}</span>
+                        <div class="cat-thumbs" id="thumbs-${cat}"></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <span class="cat-done-check" id="check-${cat}">✅</span>
+                        <span class="cat-toggle-icon">▼</span>
+                    </div>
+                `;
+                header.addEventListener("click", () => toggleSection(cat));
+
+                // Grid body
+                const body = document.createElement("div");
+                body.className = "cat-body";
+                body.id = `body-${cat}`;
+
+                const grid = document.createElement("div");
+                grid.className = "meal-grid";
+                grid.id = `grid-${cat}`;
+
+                MEALS[cat].forEach(meal => {
+                    const card = document.createElement("label");
+                    card.className = "food-card";
+                    card.id = `card-${meal.id}`;
+                    card.htmlFor = `chk-${meal.id}`;
+                    card.innerHTML = `
+                        <input type="checkbox" id="chk-${meal.id}" value="${meal.id}" />
+                        <div class="food-img-wrap">
+                            <img src="${BASE_IMG}${meal.img}" alt="${meal.name}" loading="lazy" />
+                        </div>
+                        <div class="chk-badge">✓</div>
+                        <span class="food-name">${meal.name}</span>
+                    `;
+                    const chk = card.querySelector("input");
+                    chk.addEventListener("change", () => handleMealSelection(cat, meal, chk, card));
+                    grid.appendChild(card);
+                });
+
+                body.appendChild(grid);
+                section.appendChild(header);
+                section.appendChild(body);
+                document.getElementById("categories-container").appendChild(section);
+            }
+
+            function handleMealSelection(cat, meal, chk, card) {
+                const set = catSelected[cat];
+
+                if (chk.checked) {
+                    // Enforce per-category limit
+                    if (set.size >= CAT_LIMIT) { chk.checked = false; return; }
+                    set.add(meal.id);
+                    card.classList.add("selected");
+                } else {
+                    set.delete(meal.id);
+                    card.classList.remove("selected");
+                }
+
+                updateCategoryCounter(cat);
+                validateSelections();
+                // Hide success banner when user makes any change
+                const banner = document.getElementById("success-banner");
+                if (banner) banner.style.display = "none";
+            }
+
+            function updateCategoryCounter(cat) {
+                const set = catSelected[cat];
+                const count = set.size;
+                const full = count === CAT_LIMIT;
+                const counter = document.getElementById(`counter-${cat}`);
+                const section = document.getElementById(`section-${cat}`);
+
+                if (counter) {
+                    counter.textContent = `${count} / ${CAT_LIMIT}`;
+                    counter.classList.toggle("done-badge", full);
+                }
+                if (section) section.classList.toggle("done", full);
+
+                // Dim / undim non-selected cards in this category
+                document.querySelectorAll(`#grid-${cat} .food-card`).forEach(card => {
+                    const selected = card.classList.contains("selected");
+                    card.classList.toggle("dimmed", full && !selected);
+                    const inp = card.querySelector("input");
+                    if (inp) inp.disabled = (full && !selected);
+                });
+
+                if (full) {
+                    collapseCategorySection(cat);
+                } else {
+                    expandCategorySection(cat);
+                }
+            }
+
+            function collapseCategorySection(cat) {
+                const section = document.getElementById(`section-${cat}`);
+                if (!section) return;
+                section.classList.add("collapsed");
+                section.querySelector(".cat-header").setAttribute("aria-expanded", "false");
+                const thumbsEl = document.getElementById(`thumbs-${cat}`);
+                if (thumbsEl) {
+                    thumbsEl.innerHTML = "";
+                    catSelected[cat].forEach(id => {
+                        const meal = MEALS[cat].find(m => m.id === id);
+                        if (!meal) return;
+                        const div = document.createElement("div");
+                        div.className = "cat-thumb";
+                        div.innerHTML = `<img src="${BASE_IMG}${meal.img}" alt="${meal.name}" />`;
+                        thumbsEl.appendChild(div);
+                    });
+                }
+            }
+
+            function expandCategorySection(cat) {
+                const section = document.getElementById(`section-${cat}`);
+                if (!section) return;
+                section.classList.remove("collapsed");
+                section.querySelector(".cat-header").setAttribute("aria-expanded", "true");
+            }
+
+            function toggleSection(cat) {
+                const section = document.getElementById(`section-${cat}`);
+                if (!section) return;
+                if (section.classList.contains("collapsed")) {
+                    expandCategorySection(cat);
+                } else if (catSelected[cat].size === CAT_LIMIT) {
+                    collapseCategorySection(cat);
+                }
+            }
+
+            function validateSelections() {
+                const totalSelected = CATEGORIES.reduce((s, c) => s + catSelected[c].size, 0);
+                const completedCats = CATEGORIES.filter(c => catSelected[c].size === CAT_LIMIT).length;
+                const allDone = completedCats === CATEGORIES.length;
+
+                const counterEl = document.getElementById("global-counter");
+                if (counterEl) {
+                    counterEl.innerHTML = `<strong>${totalSelected} / 12</strong> meals selected (${completedCats} / 4 categories complete)`;
+                }
+                const saveBtn = document.getElementById("btn-save");
+                if (saveBtn) saveBtn.disabled = !allDone;
+            }
+
+            window.saveSelections = async function() {
+                const btn = document.getElementById("btn-save");
+                btn.disabled = true;
+                btn.textContent = "Saving…";
+
+                const payload = {};
+                CATEGORIES.forEach(cat => { payload[cat] = [...catSelected[cat]]; });
+
+                try {
+                    await fetch(`${API}/auth/meal-preferences`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: "include",
+                        body: JSON.stringify({ meals: Object.values(payload).flat(), categories: payload }),
+                    });
+                    const banner = document.getElementById("success-banner");
+                    if (banner) banner.style.display = "block";
+                } catch {
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = "GENERATE PLAN";
+                }
+            };
+
+            async function loadSavedPreferences() {
+                try {
+                    const res = await window.MealMatrix.fetchWithRetry(`${API}/auth/meal-preferences`, { credentials: "include" });
+                    if (!res || !res.ok) return;
+                    const data = await res.json();
+
+                    const prefs = data.categories || {};
+                    const flat = data.meals || [];
+
+                    CATEGORIES.forEach((cat) => {
+                        const ids = prefs[cat] || [];
+                        ids.forEach(id => {
+                            const chk = document.getElementById(`chk-${id}`);
+                            if (!chk || catSelected[cat].size >= CAT_LIMIT) return;
+                            chk.checked = true;
+                            catSelected[cat].add(id);
+                            const card = document.getElementById(`card-${id}`);
+                            if (card) card.classList.add("selected");
+                        });
+                    });
+
+                    if (!Object.keys(prefs).length && flat.length) {
+                        flat.forEach(id => {
+                            for (const cat of CATEGORIES) {
+                                const meal = MEALS[cat].find(m => m.id === id);
+                                if (meal && catSelected[cat].size < CAT_LIMIT) {
+                                    const chk = document.getElementById(`chk-${id}`);
+                                    const card = document.getElementById(`card-${id}`);
+                                    if (chk && !chk.checked) {
+                                        chk.checked = true;
+                                        catSelected[cat].add(id);
+                                        if (card) card.classList.add("selected");
+                                    }
+                                    break;
+                                }
+                            }
+                        });
+                    }
+
+                    CATEGORIES.forEach(cat => updateCategoryCounter(cat));
+                    validateSelections();
+
+                    const total = CATEGORIES.reduce((s, c) => s + catSelected[c].size, 0);
+                    if (total === 12) {
+                        const banner = document.getElementById("success-banner");
+                        if (banner) banner.style.display = "block";
+                        const tagline = document.getElementById("page-tagline");
+                        if (tagline) tagline.textContent = "Your Meal Preferences";
+                    }
+                } catch { }
+            }
+
+            // Boot
+            CATEGORIES.forEach(buildCategory);
+            validateSelections();
+            loadSavedPreferences();
+        })();
+    </script>
+</body>
+
+</html>

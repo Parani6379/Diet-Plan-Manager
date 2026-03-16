@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MealMatrix – Build a Lifestyle, Not Just a Diet</title>
+  <meta name="description"
+    content="MealMatrix helps you plan personalised meals, track nutrition, and build healthy habits every day." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #e8edf4;
+      color: #1f2937;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ══════════════════════════════
+       NAVBAR
+    ══════════════════════════════ */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 64px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #1f2937;
+      text-decoration: none;
+    }
+
+    .nav-logo-dot {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      background: radial-gradient(circle at 35% 25%, #b1f4cf, #22c55e);
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 2px 10px rgba(34, 197, 94, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-logo-dot::after {
+      content: 'MM';
+      position: absolute;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.68rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.03em;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+    }
+
+    .nav-logo-text {
+      font-size: 1.12rem;
+      font-weight: 800;
+      color: #1f2937;
+      letter-spacing: -0.01em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #374151;
+      transition: color .15s;
+      position: relative;
+      padding-bottom: 3px;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #16a34a;
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #16a34a;
+      border-radius: 999px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-nav-login {
+      padding: 9px 26px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      border: none;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 2px 12px rgba(34, 197, 94, 0.35);
+      transition: transform .15s, box-shadow .15s;
+    }
+
+    .btn-nav-login:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.45);
+    }
+
+    .btn-nav-outline {
+      padding: 8px 22px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #374151;
+      background: transparent;
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+
+    .btn-nav-outline:hover {
+      border-color: #22c55e;
+      color: #16a34a;
+    }
+
+    .nav-user-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #6b7280;
+    }
+
+    /* ══════════════════════════════
+       HERO
+    ══════════════════════════════ */
+    .hero-section {
+      background: #e8edf4;
+      padding: 56px 8% 40px;
+    }
+
+    .hero-inner {
+      background: #fff;
+      border-radius: 24px;
+      padding: 48px 56px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 48px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      border-radius: 999px;
+      padding: 4px 14px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #16a34a;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 800;
+      line-height: 1.15;
+      color: #111827;
+      margin-bottom: 6px;
+    }
+
+    .hero-title .green {
+      color: #16a34a;
+    }
+
+    .hero-sub {
+      font-size: 0.95rem;
+      color: #6b7280;
+      line-height: 1.65;
+      margin-bottom: 32px;
+      max-width: 380px;
+    }
+
+    .hero-cta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      padding: 13px 32px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      border: none;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+      transition: transform .15s, box-shadow .15s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(34, 197, 94, 0.5);
+    }
+
+    .btn-secondary {
+      padding: 12px 28px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #374151;
+      background: #fff;
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+
+    .btn-secondary:hover {
+      border-color: #22c55e;
+      color: #16a34a;
+    }
+
+    /* Hero image carousel */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .hero-img-wrap {
+      width: 100%;
+      max-width: 340px;
+      aspect-ratio: 3/3.2;
+      border-radius: 22px;
+      overflow: hidden;
+      background: #111;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+      position: relative;
+    }
+
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .hero-slide.active {
+      opacity: 1;
+    }
+
+    .hero-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero-arrows {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .hero-arrow {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid #d1d5db;
+      background: #fff;
+      color: #374151;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color .15s, background .15s, color .15s;
+    }
+
+    .hero-arrow:hover {
+      border-color: #22c55e;
+      background: #22c55e;
+      color: #fff;
+    }
+
+    /* ══════════════════════════════
+       STATS BAR
+    ══════════════════════════════ */
+    .stats-section {
+      background: #e8edf4;
+      padding: 0 8% 40px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .stat-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px 24px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 10px;
+    }
+
+    .stat-bar-track {
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .stat-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e, #4ade80);
+      border-radius: 999px;
+      width: 0%;
+      transition: width 1.2s ease;
+    }
+
+    /* ══════════════════════════════
+       FEATURES "Make Healthy Eating Easy"
+    ══════════════════════════════ */
+    .features-section {
+      background: #e8edf4;
+      padding: 16px 8% 40px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 24px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px 24px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-card-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .feature-card-desc {
+      font-size: 0.84rem;
+      color: #6b7280;
+      line-height: 1.65;
+    }
+
+    .feature-card-desc .highlight {
+      color: #16a34a;
+      font-weight: 500;
+    }
+
+    /* ══════════════════════════════
+       HOW IT WORKS
+    ══════════════════════════════ */
+    .how-section {
+      background: #e8edf4;
+      padding: 16px 8% 40px;
+    }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .how-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 36px 28px 28px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      text-align: center;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .how-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+    }
+
+    .how-number {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(34, 197, 94, 0.12);
+      border: 2px solid rgba(34, 197, 94, 0.3);
+      color: #16a34a;
+      font-weight: 800;
+      font-size: 1.1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .how-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .how-desc {
+      font-size: 0.84rem;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .how-desc .highlight {
+      color: #16a34a;
+      font-weight: 500;
+    }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    .footer {
+      background: #fff;
+      padding: 40px 8% 0;
+      box-shadow: 0 -1px 0 #e5e7eb;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      gap: 32px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding-bottom: 40px;
+    }
+
+    .footer-col-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 12px;
+    }
+
+    .footer-col-body {
+      font-size: 0.82rem;
+      color: #6b7280;
+      line-height: 1.7;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .footer-links a {
+      font-size: 0.83rem;
+      color: #6b7280;
+      transition: color .15s;
+    }
+
+    .footer-links a:hover {
+      color: #16a34a;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid #e5e7eb;
+      padding: 18px 0;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-copyright {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+
+    .newsletter-form {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .newsletter-label {
+      font-size: 0.82rem;
+      color: #6b7280;
+      white-space: nowrap;
+    }
+
+    .newsletter-input {
+      padding: 8px 16px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      color: #374151;
+      outline: none;
+      width: 180px;
+      transition: border-color .15s;
+    }
+
+    .newsletter-input:focus {
+      border-color: #22c55e;
+    }
+
+    .newsletter-btn {
+      padding: 8px 20px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      border: none;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(34, 197, 94, 0.35);
+      transition: transform .15s;
+    }
+
+    .newsletter-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    /* ══════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════ */
+    @media (max-width: 900px) {
+      .navbar {
+        padding: 0 24px;
+      }
+
+      .hero-inner {
+        grid-template-columns: 1fr;
+        padding: 32px 28px;
+      }
+
+      .hero-visual {
+        display: none;
+      }
+
+      .stats-grid,
+      .features-grid,
+      .how-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero-section,
+      .stats-section,
+      .features-section,
+      .how-section {
+        padding-left: 5%;
+        padding-right: 5%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══ NAVBAR ══ -->
+  <header class="navbar">
+    <div class="nav-logo">
+      <div class="nav-logo-dot"></div>
+      <span class="nav-logo-text">MealMatrix</span>
+    </div>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="/" class="active" id="nav-home">Home</a></li>
+        <li><a href="/pages/meal-selection.html" id="nav-plans">Plans</a></li>
+        <li><a href="/pages/about.html" id="nav-about">About</a></li>
+        <li><a href="/pages/help.html" id="nav-help">Help</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions" id="nav-actions">
+      <button class="btn-nav-login" onclick="window.location.href='/pages/login.html'" id="btn-login">Login</button>
+    </div>
+  </header>
+
+  <!-- ══ HERO ══ -->
+  <section class="hero-section">
+    <div class="hero-inner">
+      <!-- Left: Text -->
+      <div class="hero-text">
+        <div class="hero-badge">🥗 Your Nutrition Partner</div>
+        <h1 class="hero-title">
+          Build a Lifestyle,<br>
+          <span class="green">Not Just a Diet.</span>
+        </h1>
+        <p class="hero-sub">
+          Sustainable healthy habits that match your routine and keep you motivated long term.
+        </p>
+        <div class="hero-cta-row" id="hero-cta">
+          <button class="btn-primary" onclick="window.location.href='/pages/register.html'">
+            🚀 Get Started Free
+          </button>
+          <button class="btn-secondary" onclick="window.location.href='/pages/login.html'">
+            Log In
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Carousel -->
+      <div class="hero-visual">
+        <div class="hero-img-wrap" id="hero-carousel">
+          <div class="hero-slide active">
+            <img src="/src/img/Slider/IMG_1.png" alt="Slide 1" />
+          </div>
+          <div class="hero-slide">
+            <img src="/src/img/Slider/IMG_2.png" alt="Slide 2" />
+          </div>
+          <div class="hero-slide">
+            <img src="/src/img/Slider/IMG_3.png" alt="Slide 3" />
+          </div>
+          <div class="hero-slide">
+            <img src="/src/img/Slider/IMG_4.png" alt="Slide 4" />
+          </div>
+        </div>
+        <div class="hero-arrows">
+          <button class="hero-arrow" onclick="heroSlide(-1)" id="arrow-prev">&#8249;</button>
+          <button class="hero-arrow" onclick="heroSlide(1)" id="arrow-next">&#8250;</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ STATS ══ -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">3K+ Members Transformed</div>
+        <div class="stat-bar-track">
+          <div class="stat-bar-fill" data-width="78%"></div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">1.5K+ Weekly Plans Created</div>
+        <div class="stat-bar-track">
+          <div class="stat-bar-fill" data-width="55%"></div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">2K+ Active Users</div>
+        <div class="stat-bar-track">
+          <div class="stat-bar-fill" data-width="66%"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FEATURES ══ -->
+  <section class="features-section">
+    <h2 class="section-title">Make Healthy Eating Easy</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-card-title">Smart Meal Planning</div>
+        <div class="feature-card-desc">
+          Personalized weekly meal <span class="highlight">planning</span> based on your calorie goals and preferences.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-title">Nutrition Analysis</div>
+        <div class="feature-card-desc">
+          Calorie, protein, carbs, and fat <span class="highlight">breakdown</span> for every plan you create.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-title">Lifestyle Support</div>
+        <div class="feature-card-desc">
+          Tips, reminders, and <span class="highlight">habit</span> tracking to keep you on a healthy routine.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ HOW IT WORKS ══ -->
+  <section class="how-section">
+    <h2 class="section-title">How it works?</h2>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-number">1</div>
+        <div class="how-title">Create Profile</div>
+        <div class="how-desc">Sign up and set up your account.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-number">2</div>
+        <div class="how-title">Set Goals</div>
+        <div class="how-desc">Define your <span class="highlight">daily calorie</span> and macro targets.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-number">3</div>
+        <div class="how-title">Track Progress</div>
+        <div class="how-desc">Follow your weekly plan and monitor results.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ══ -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-col-title">About</div>
+        <div class="footer-col-body">
+          MealMatrix helps you plan smarter meals by matching your body needs, goals, and <span
+            style="color:#16a34a;font-weight:500;">lifestyle</span> into one simple, <span
+            style="color:#16a34a;font-weight:500;">guided</span> journey.
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Quick Links</div>
+        <ul class="footer-links">
+          <li><a href="/pages/home.html">Home</a></li>
+          <li><a href="/pages/meal-selection.html">Plans</a></li>
+          <li><a href="/pages/weekly-plan.html">Workout Plans</a></li>
+          <li><a href="/pages/dashboard.html">Diet Plans</a></li>
+          <li><a href="/pages/help.html">Healthy Lifestyle</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Resources</div>
+        <ul class="footer-links">
+          <li><a href="/pages/body-needs.html">Nutrition Guide</a></li>
+          <li><a href="/pages/help.html">Fitness Tips</a></li>
+          <li><a href="/pages/meal-selection.html"><span style="color:#16a34a;">Healthy Recipes</span></a></li>
+          <li><a href="/pages/help.html">FAQs</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Connect with us</div>
+        <ul class="footer-links">
+          <li><a href="#" style="color:#16a34a;">Instagram</a></li>
+          <li><a href="#">Facebook</a></li>
+          <li><a href="#">Twitter</a></li>
+          <li><a href="#">YouTube</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copyright">© 2026 Example company. All rights reserved.</span>
+      <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+        <span class="newsletter-label">Subscribe to our newsletter</span>
+        <input class="newsletter-input" type="email" id="newsletter-email" placeholder="Enter your email" />
+        <button class="newsletter-btn" type="submit">Subscribe</button>
+      </form>
+    </div>
+  </footer>
+
+  <script src="/src/auth-header.js"></script>
+  <script>
+    (() => {
+      const getApi = () => (window.MealMatrix && window.MealMatrix.apiBase) || "";
+      const API = getApi();
+
+      /* ── Newsletter ───────────────────────────────────────────────────────── */
+      window.subscribeNewsletter = async function(e) {
+        e.preventDefault();
+        const email = document.getElementById("newsletter-email").value.trim();
+        if (!email) return;
+        try {
+          await fetch(`${API}/api/subscribe-newsletter`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
+          });
+        } catch { }
+        document.getElementById("newsletter-email").value = "";
+        document.getElementById("newsletter-email").placeholder = "✓ Subscribed!";
+      };
+
+      /* ── Hero image carousel ─────────────────────────────────────────────── */
+      const heroSlides = document.querySelectorAll(".hero-slide");
+      let heroIdx = 0;
+      let heroTimer;
+
+      function heroGoTo(idx) {
+        if (!heroSlides.length) return;
+        heroSlides[heroIdx].classList.remove("active");
+        heroIdx = (idx + heroSlides.length) % heroSlides.length;
+        heroSlides[heroIdx].classList.add("active");
+        clearInterval(heroTimer);
+        heroTimer = setInterval(() => heroGoTo(heroIdx + 1), 3500);
+      }
+
+      window.heroSlide = function(dir) { heroGoTo(heroIdx + dir); };
+
+      if (heroSlides.length) {
+        heroTimer = setInterval(() => heroGoTo(heroIdx + 1), 3500);
+      }
+
+      /* ── Animate stat bars on scroll ─────────────────────────────────────── */
+      function animateBars() {
+        document.querySelectorAll(".stat-bar-fill").forEach(bar => {
+          const target = bar.getAttribute("data-width");
+          if (target && (bar.style.width === "" || bar.style.width === "0%")) {
+            bar.style.width = target;
+          }
+        });
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { animateBars(); observer.unobserve(e.target); } });
+      }, { threshold: 0.3 });
+
+      document.querySelectorAll(".stat-card").forEach(c => observer.observe(c));
+
+      /* ── Soft auth check: update nav and hero if already logged in ───────── */
+      async function checkAuth() {
+        try {
+          // Use fetchWithRetry for robust checking
+          const res = await window.MealMatrix.fetchWithRetry(`${API}/auth/me`, { credentials: "include" });
+          if (res && res.ok) {
+            const data = await res.json();
+            const u = data.user || data;
+            const name = (u.username || u.email || "User").toUpperCase();
+
+            // Update Nav using shared utility if available, or manual swap
+            // Here we want to keep the specific index.html styles for nav-actions
+            const navEl = document.getElementById("nav-actions");
+            if (navEl) {
+              navEl.innerHTML = "";
+              const span = document.createElement("span");
+              span.className = "nav-user-name";
+              span.textContent = `Hi, ${name}`;
+              navEl.appendChild(span);
+
+              const logoutBtn = document.createElement("button");
+              logoutBtn.className = "btn-nav-outline";
+              logoutBtn.textContent = "Log Out";
+              logoutBtn.onclick = async () => {
+                await fetch(`${API}/auth/logout`, { method: "POST", credentials: "include" });
+                window.location.reload();
+              };
+              navEl.appendChild(logoutBtn);
+
+              const dashBtn = document.createElement("button");
+              dashBtn.className = "btn-nav-login";
+              dashBtn.textContent = "Dashboard →";
+              dashBtn.onclick = () => { window.location.href = "/pages/home.html"; };
+              navEl.appendChild(dashBtn);
+            }
+
+            // Swap hero CTA
+            const ctaEl = document.getElementById("hero-cta");
+            if (ctaEl) {
+              ctaEl.innerHTML = "";
+              const dashBtn = document.createElement("button");
+              dashBtn.className = "btn-primary";
+              dashBtn.textContent = "🏠 Dashboard";
+              dashBtn.onclick = () => { window.location.href = "/pages/home.html"; };
+              ctaEl.appendChild(dashBtn);
+
+              const logoutBtn = document.createElement("button");
+              logoutBtn.className = "btn-secondary";
+              logoutBtn.textContent = "Log Out";
+              logoutBtn.onclick = async () => {
+                await fetch(`${API}/auth/logout`, { method: "POST", credentials: "include" });
+                window.location.reload();
+              };
+              ctaEl.appendChild(logoutBtn);
+            }
+          }
+        } catch { }
+      }
+
+      checkAuth();
+    })();
+  </script>
+</body>
+
+</html>

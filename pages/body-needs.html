@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Body Needs – MealMatrix</title>
+    <meta name="description" content="See your personalised daily nutrition requirements on MealMatrix." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #e7ecf3;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ── Header ── */
+        .mm-header {
+            height: 64px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 36px;
+            box-shadow: 0 1px 0 #e5e7eb;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .mm-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #1f2933;
+        }
+
+        .mm-logo-dot {
+            position: relative;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 20%, #b1f4cf, #22c55e);
+            box-shadow: 0 2px 10px rgba(34, 197, 94, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .mm-logo-dot::after {
+            content: 'MM';
+            position: absolute;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 0.62rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -0.03em;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .mm-user-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .mm-user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f59e0b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        /* ── Page ── */
+        .page-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Food decoration images scattered around */
+        .food-deco {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .food-deco img {
+            position: absolute;
+            border-radius: 16px;
+            object-fit: cover;
+        }
+
+        /* ── Center content box ── */
+        .body-needs-box {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .body-needs-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #1f2933;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            text-align: center;
+        }
+
+        /* ── Nutrition Card (green) ── */
+        .nutrition-card {
+            background: #b8e6c0;
+            border-radius: 20px;
+            padding: 32px 48px;
+            width: 100%;
+            max-width: 340px;
+            box-shadow: 0 8px 32px rgba(34, 197, 94, 0.2);
+        }
+
+        .nutrition-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 14px 0;
+            border-bottom: 1.5px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .nutrition-row:last-child {
+            border-bottom: none;
+        }
+
+        .nutrition-label {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1f2933;
+        }
+
+        .nutrition-value {
+            margin-left: auto;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #166534;
+        }
+
+        /* ── Next Button ── */
+        .next-btn {
+            padding: 13px 56px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 8px 28px rgba(34, 197, 94, 0.45);
+            transition: transform .15s, box-shadow .15s;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 36px rgba(34, 197, 94, 0.55);
+        }
+
+        @media (max-width: 700px) {
+            .food-deco img {
+                display: none;
+            }
+
+            .nutrition-card {
+                padding: 24px 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="mm-header">
+        <a href="/" class="mm-logo">
+            <div class="mm-logo-dot"></div>
+            MealMatrix
+        </a>
+        <div class="mm-user-pill">
+            <span id="header-username">USER</span>
+            <div class="mm-user-avatar">👤</div>
+        </div>
+    </header>
+
+    <!-- PAGE -->
+    <div class="page-wrapper">
+
+        <!-- Scattered food images -->
+        <div class="food-deco">
+            <img src="/src/img/meals/food_bg_body.png" alt=""
+                style="top:-20px;left:-20px;width:500px;height:500px;opacity:0.55;border-radius:0;" />
+            <img src="/src/img/meals/salmon_veggies.png" alt=""
+                style="bottom:20px;left:80px;width:120px;height:120px;transform:rotate(-8deg);" />
+            <img src="/src/img/meals/chicken_salad.png" alt=""
+                style="bottom:-10px;right:180px;width:130px;height:130px;transform:rotate(6deg);" />
+            <img src="/src/img/meals/mixed_nuts.png" alt=""
+                style="bottom:60px;right:50px;width:110px;height:110px;transform:rotate(-4deg);" />
+            <img src="/src/img/meals/quinoa_bowl.png" alt="" style="top:20px;right:60px;width:120px;height:120px;" />
+            <img src="/src/img/meals/brown_rice_chicken.png" alt=""
+                style="top:160px;right:30px;width:100px;height:100px;transform:rotate(8deg);" />
+        </div>
+
+        <!-- Center Content -->
+        <div class="body-needs-box">
+            <h1 class="body-needs-title">Now Your Body Needs</h1>
+
+            <div class="nutrition-card">
+                <div class="nutrition-row">
+                    <span class="nutrition-label">Kcal</span>
+                    <span class="nutrition-value" id="bn-kcal">—</span>
+                </div>
+                <div class="nutrition-row">
+                    <span class="nutrition-label">Protein</span>
+                    <span class="nutrition-value" id="bn-protein">—</span>
+                </div>
+                <div class="nutrition-row">
+                    <span class="nutrition-label">Carbs</span>
+                    <span class="nutrition-value" id="bn-carbs">—</span>
+                </div>
+                <div class="nutrition-row">
+                    <span class="nutrition-label">Fat</span>
+                    <span class="nutrition-value" id="bn-fat">—</span>
+                </div>
+            </div>
+
+            <button class="next-btn" onclick="goNext()">NEXT</button>
+        </div>
+
+    </div>
+
+    <script src="/src/auth-header.js" data-protected="true"></script>
+    <script>
+        (() => {
+            const API = (window.MealMatrix && window.MealMatrix.apiBase) || "";
+
+            function fmt(n) {
+                return Number(n).toLocaleString("en-IN");
+            }
+
+            function setValues(kcal, protein, carbs, fat) {
+                document.getElementById("bn-kcal").textContent = fmt(kcal) + " kcal";
+                document.getElementById("bn-protein").textContent = fmt(protein) + " g";
+                document.getElementById("bn-carbs").textContent = fmt(carbs) + " g";
+                document.getElementById("bn-fat").textContent = fmt(fat) + " g";
+                sessionStorage.setItem("bn", JSON.stringify({ kcal, protein, carbs, fat }));
+            }
+
+            async function loadData() {
+                try {
+                    const nr = await window.MealMatrix.fetchWithRetry(`${API}/auth/body-needs`, { credentials: "include" });
+                    if (nr && nr.ok) {
+                        const needs = await nr.json();
+                        setValues(
+                            needs.kcal || 0,
+                            needs.protein || 0,
+                            needs.carbs || 0,
+                            needs.fat || 0
+                        );
+                    } else {
+                        showProfileWarning();
+                    }
+                } catch {
+                    showProfileWarning();
+                }
+            }
+
+            function showProfileWarning() {
+                const box = document.querySelector(".body-needs-box");
+                if (box) {
+                    box.innerHTML = `
+                        <h1 class="body-needs-title">No Profile Found</h1>
+                        <div class="nutrition-card" style="text-align:center; padding:40px 20px;">
+                            <p style="color:#1f2933; font-weight:600; margin-bottom:20px;">
+                                Please complete your profile first to see your nutrition targets.
+                            </p>
+                            <a href="/pages/profile.html" class="next-btn" style="text-decoration:none; display:inline-block;">GO TO PROFILE</a>
+                        </div>
+                    `;
+                }
+            }
+
+            window.goNext = function() {
+                window.location.href = "/pages/meal-selection.html";
+            };
+
+            loadData();
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account - MealMatrix</title>
+  <meta name="description" content="Create your MealMatrix account to start your personalized meal planning journey." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ────────────────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #e7ecf3;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    /* ── Header ──────────────────────────────────────────────────── */
+    .mm-header {
+      height: 72px;
+      padding: 0 36px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 0 #e5e7eb;
+      flex-shrink: 0;
+    }
+
+    .mm-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      color: #1f2933;
+      letter-spacing: 0.02em;
+    }
+
+    .mm-logo-icon {
+      position: relative;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 0%, #b1f4cf, #22c55e);
+      box-shadow: 0 2px 10px rgba(34, 197, 94, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .mm-logo-icon::after {
+      content: 'MM';
+      position: absolute;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.62rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.03em;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .mm-nav {
+      display: flex;
+      gap: 24px;
+    }
+
+    .mm-nav-link {
+      font-size: 0.9rem;
+      color: #6b7280;
+      font-weight: 500;
+      transition: color 160ms ease-out;
+    }
+
+    .mm-nav-link:hover {
+      color: #1f2933;
+    }
+
+    .mm-login-btn {
+      border-radius: 999px;
+      border: none;
+      background: radial-gradient(circle at 30% 0%, #bbf7d0, #00d26a);
+      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.4), 0 0 22px rgba(16, 185, 129, 0.7);
+      padding: 8px 22px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      font-weight: 600;
+      color: #064e3b;
+      cursor: pointer;
+      transition: transform 160ms ease-out, box-shadow 160ms ease-out;
+    }
+
+    .mm-login-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.7), 0 0 30px rgba(16, 185, 129, 0.9);
+    }
+
+    /* ── Main / Page Body ────────────────────────────────────────── */
+    .page-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    /* ── Auth card ────────────────────────────────────────────────── */
+    .auth-card {
+      background: #fff;
+      border-radius: 28px;
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.14);
+      padding: 44px 40px 40px;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #00d26a, #00b75c);
+      border-radius: 28px 28px 0 0;
+    }
+
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .auth-logo-dot {
+      position: relative;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 0%, #b1f4cf, #22c55e);
+      box-shadow: 0 2px 10px rgba(34, 197, 94, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .auth-logo-dot::after {
+      content: 'MM';
+      position: absolute;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.6rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.03em;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .auth-logo-text {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1f2933;
+    }
+
+    /* ── Step visibility ─────────────────────────────────────────── */
+    .reg-step {
+      display: none;
+    }
+
+    .reg-step.active {
+      display: block;
+    }
+
+    /* ── Step headings ───────────────────────────────────────────── */
+    .step-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #1f2933;
+      text-align: center;
+      margin: 0 0 6px;
+    }
+
+    .step-sub {
+      font-size: 0.85rem;
+      color: #6b7280;
+      text-align: center;
+      margin: 0 0 24px;
+    }
+
+    /* ── Choice buttons (step 1) ─────────────────────────────────── */
+    .choice-btn {
+      display: block;
+      width: 100%;
+      padding: 13px 20px;
+      margin-bottom: 12px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 14px;
+      background: #f9fafb;
+      font-size: 0.92rem;
+      font-family: inherit;
+      font-weight: 600;
+      color: #1f2933;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color .18s, background .18s, box-shadow .18s;
+    }
+
+    .choice-btn:hover {
+      border-color: #00d26a;
+      background: #f0fdf4;
+      box-shadow: 0 0 0 3px rgba(0, 210, 106, 0.10);
+    }
+
+    /* ── Form fields ─────────────────────────────────────────────── */
+    .auth-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .auth-field label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #374151;
+      letter-spacing: 0.03em;
+    }
+
+    .auth-field input {
+      padding: 11px 14px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      color: #1f2933;
+      background: #f9fafb;
+      outline: none;
+      transition: border-color .18s, box-shadow .18s;
+    }
+
+    .auth-field input:focus {
+      border-color: #00d26a;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(0, 210, 106, 0.12);
+    }
+
+    /* ── Primary button ──────────────────────────────────────────── */
+    .auth-submit {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #00d26a, #00b75c);
+      color: #fff;
+      font-size: 0.95rem;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 210, 106, 0.4);
+      transition: transform .15s, box-shadow .15s;
+      letter-spacing: 0.02em;
+      margin-top: 4px;
+    }
+
+    .auth-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 30px rgba(0, 210, 106, 0.55);
+    }
+
+    .auth-submit:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── Feedback messages ───────────────────────────────────────── */
+    .auth-error {
+      font-size: 0.82rem;
+      color: #dc2626;
+      text-align: center;
+      min-height: 18px;
+      margin-bottom: 4px;
+    }
+
+    .auth-success {
+      font-size: 0.82rem;
+      color: #00b75c;
+      text-align: center;
+      min-height: 18px;
+      margin-bottom: 4px;
+    }
+
+    /* ── Note / back links ───────────────────────────────────────── */
+    .auth-note {
+      text-align: center;
+      font-size: 0.82rem;
+      color: #6b7280;
+      margin-top: 16px;
+    }
+
+    .auth-note a {
+      color: #00b75c;
+      font-weight: 600;
+    }
+
+    .auth-note a:hover {
+      text-decoration: underline;
+    }
+
+    /* ── 6-box OTP inputs ────────────────────────────────────────── */
+    .otp-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 16px 0;
+    }
+
+    .otp-row input {
+      width: 44px !important;
+      height: 52px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      font-family: inherit;
+      border-radius: 10px;
+      border: 1.5px solid #e5e7eb;
+      background: #f9fafb;
+      outline: none;
+      transition: border-color .18s, box-shadow .18s;
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    .otp-row input::-webkit-outer-spin-button,
+    .otp-row input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .otp-row input:focus {
+      border-color: #00d26a;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(0, 210, 106, 0.12);
+    }
+
+    /* ── Resend btn ──────────────────────────────────────────────── */
+    .resend-btn {
+      background: none;
+      border: none;
+      color: #00b75c;
+      font-size: 0.82rem;
+      font-family: inherit;
+      font-weight: 600;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .resend-btn:hover {
+      color: #00d26a;
+    }
+
+    /* ── Spinner ─────────────────────────────────────────────────── */
+    .auth-spinner {
+      display: inline-block;
+      width: 13px;
+      height: 13px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ── Divider ─────────────────────────────────────────────────── */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 8px 0 16px;
+      color: #9ca3af;
+      font-size: 0.78rem;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #e5e7eb;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ── HEADER ──────────────────────────────────────────────────── -->
+  <header class="mm-header">
+    <a href="/" class="mm-logo">
+      <span class="mm-logo-icon"></span>
+      <span>MealMatrix</span>
+    </a>
+    <nav class="mm-nav">
+      <a href="/" class="mm-nav-link">Home</a>
+      <a href="/pages/plans.html" class="mm-nav-link">Plans</a>
+      <a href="/pages/about.html" class="mm-nav-link">About</a>
+      <a href="/pages/help.html" class="mm-nav-link">Help</a>
+    </nav>
+    <a href="/pages/login.html" class="mm-login-btn">Login</a>
+  </header>
+
+  <!-- ── MAIN ───────────────────────────────────────────────────── -->
+  <main class="page-body">
+    <div class="auth-card">
+
+      <div class="auth-logo">
+        <span class="auth-logo-dot"></span>
+        <span class="auth-logo-text">MealMatrix</span>
+      </div>
+
+      <!-- ── STEP 1: Choose method ─────────────────────────────── -->
+      <div class="reg-step active" id="step-choose">
+        <h1 class="step-title">Create Account</h1>
+        <p class="step-sub">Choose how you'd like to register</p>
+
+        <button type="button" class="choice-btn" id="btn-use-phone">
+          📱 &nbsp;Continue with phone number
+        </button>
+        <button type="button" class="choice-btn" id="btn-use-email">
+          ✉️ &nbsp;Continue with email
+        </button>
+
+        <p class="auth-note" style="margin-top:20px;">
+          By continuing you agree to our
+          <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.<br />
+          Already registered? <a href="/pages/login.html">Login</a>
+        </p>
+      </div>
+
+      <!-- ── STEP 2A: Email registration ───────────────────────── -->
+      <div class="reg-step" id="step-email">
+        <h1 class="step-title">Register with Email</h1>
+        <p class="step-sub">Enter your details to get started</p>
+
+        <div class="auth-field">
+          <label for="email-name">Full Name (optional)</label>
+          <input type="text" id="email-name" placeholder="Jane Doe" />
+        </div>
+        <div class="auth-field">
+          <label for="email-addr">Email Address</label>
+          <input type="email" id="email-addr" placeholder="jane@example.com" required />
+        </div>
+        <div class="auth-field">
+          <label for="email-password">Password</label>
+          <input type="password" id="email-password" placeholder="Min. 8 chars, include a number" required />
+        </div>
+
+        <p class="auth-error" id="email-err"></p>
+
+        <button type="button" class="auth-submit" id="btn-email-submit">
+          Send Verification Code
+        </button>
+
+        <p class="auth-note">
+          <a href="#" id="back-email">← Back</a> &nbsp;·&nbsp;
+          Already registered? <a href="/pages/login.html">Login</a>
+        </p>
+      </div>
+
+      <!-- ── STEP 2B: Phone registration ───────────────────────── -->
+      <div class="reg-step" id="step-phone">
+        <h1 class="step-title">Register with Phone</h1>
+        <p class="step-sub">Enter your details to get started</p>
+
+        <div class="auth-field">
+          <label for="phone-name">Full Name (optional)</label>
+          <input type="text" id="phone-name" placeholder="Jane Doe" />
+        </div>
+        <div class="auth-field">
+          <label for="phone-num">Phone Number</label>
+          <input type="tel" id="phone-num" placeholder="+91XXXXXXXXXX" required />
+        </div>
+        <div class="auth-field">
+          <label for="phone-password">Password</label>
+          <input type="password" id="phone-password" placeholder="Min. 8 chars, include a number" required />
+        </div>
+
+        <p class="auth-error" id="phone-err"></p>
+
+        <button type="button" class="auth-submit" id="btn-phone-submit">
+          Send OTP
+        </button>
+
+        <p class="auth-note">
+          <a href="#" id="back-phone">← Back</a> &nbsp;·&nbsp;
+          Already registered? <a href="/pages/login.html">Login</a>
+        </p>
+      </div>
+
+      <!-- ── STEP 3: OTP Verification ──────────────────────────── -->
+      <div class="reg-step" id="step-otp">
+        <h1 class="step-title">Verify Code</h1>
+        <p class="step-sub" id="otp-hint">Enter the 6-digit code we sent you</p>
+
+        <div class="otp-row" id="otp-boxes"></div>
+
+        <p class="auth-error" id="otp-err"></p>
+        <p class="auth-success" id="otp-ok"></p>
+
+        <button type="button" class="auth-submit" id="btn-otp-verify">
+          Verify Code
+        </button>
+
+        <p class="auth-note" style="margin-top:14px;">
+          Didn't receive it?
+          <button type="button" class="resend-btn" id="btn-resend">Resend Code</button>
+        </p>
+      </div>
+
+    </div><!-- /.auth-card -->
+  </main>
+
+  <script src="/src/auth-header.js"></script>
+  <script>
+    (() => {
+      /* Smart API base — relative when served by Flask, absolute for file:// */
+      const API = (window.MealMatrix && window.MealMatrix.apiBase) || "";
+
+      /* ── State ──────────────────────────────────────────────────────── */
+      let currentUserId = null;
+      let currentOtpType = null;   // "email" | "phone"
+
+      /* ── Helpers ────────────────────────────────────────────────────── */
+      const showStep = id =>
+        document.querySelectorAll(".reg-step").forEach(el =>
+          el.classList.toggle("active", el.id === id)
+        );
+
+      const setErr = (id, msg) => { const el = document.getElementById(id); if (el) el.textContent = msg || ""; };
+      const setOk = (id, msg) => { const el = document.getElementById(id); if (el) el.textContent = msg || ""; };
+
+      function setLoading(btnId, on, label) {
+        const b = document.getElementById(btnId);
+        if (!b) return;
+        b.disabled = on;
+        b.innerHTML = on ? '<span class="auth-spinner"></span>Please wait…' : label;
+      }
+
+      // ── On page load: if already logged in, go home ───────────────────
+      (async () => {
+        try {
+          const res = await window.MealMatrix.fetchWithRetry(`${API}/auth/me`, { credentials: "include" });
+          if (res && res.ok) window.location.href = "/pages/home.html";
+        } catch { /* ignore */ }
+      })();
+
+      /* ── OTP box builder ────────────────────────────────────────────── */
+      function buildOtpBoxes() {
+        const container = document.getElementById("otp-boxes");
+        if (!container) return;
+        container.innerHTML = "";
+        for (let i = 0; i < 6; i++) {
+          const inp = document.createElement("input");
+          inp.type = "number";
+          inp.min = "0";
+          inp.max = "9";
+          inp.maxLength = 1;
+          inp.inputMode = "numeric";
+          inp.id = `otp-d${i}`;
+          inp.addEventListener("input", () => {
+            inp.value = inp.value.slice(-1);
+            if (inp.value && i < 5) {
+                const next = document.getElementById(`otp-d${i + 1}`);
+                if (next) next.focus();
+            }
+          });
+          inp.addEventListener("keydown", e => {
+            if (e.key === "Backspace" && !inp.value && i > 0) {
+                const prev = document.getElementById(`otp-d${i - 1}`);
+                if (prev) prev.focus();
+            }
+          });
+          container.appendChild(inp);
+        }
+      }
+
+      const getOtp = () =>
+        Array.from({ length: 6 }, (_, i) =>
+          (document.getElementById(`otp-d${i}`)?.value || "")
+        ).join("");
+
+      /* ── Navigation ─────────────────────────────────────────────────── */
+      const btnEmail = document.getElementById("btn-use-email");
+      if (btnEmail) btnEmail.addEventListener("click", () => showStep("step-email"));
+      const btnPhone = document.getElementById("btn-use-phone");
+      if (btnPhone) btnPhone.addEventListener("click", () => showStep("step-phone"));
+      const backEmail = document.getElementById("back-email");
+      if (backEmail) backEmail.addEventListener("click", e => { e.preventDefault(); showStep("step-choose"); });
+      const backPhone = document.getElementById("back-phone");
+      if (backPhone) backPhone.addEventListener("click", e => { e.preventDefault(); showStep("step-choose"); });
+
+      /* ── Email Registration ─────────────────────────────────────────── */
+      const emailSubmit = document.getElementById("btn-email-submit");
+      if (emailSubmit) {
+        emailSubmit.addEventListener("click", async () => {
+          setErr("email-err", "");
+          const email = document.getElementById("email-addr").value.trim();
+          const password = document.getElementById("email-password").value;
+          const username = document.getElementById("email-name").value.trim();
+
+          if (!email) { setErr("email-err", "Email address is required."); return; }
+          if (password.length < 8) { setErr("email-err", "Password must be at least 8 characters."); return; }
+          if (!/\d/.test(password)) { setErr("email-err", "Password must contain at least one number."); return; }
+
+          setLoading("btn-email-submit", true, "Send Verification Code");
+          try {
+            const res = await fetch(`${API}/auth/register/email`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({ email, password, username }),
+            });
+            const json = await res.json();
+
+            if (json.success) {
+              currentUserId = json.user_id;
+              currentOtpType = "email";
+              buildOtpBoxes();
+              setErr("otp-err", ""); setOk("otp-ok", "");
+              const hint = document.getElementById("otp-hint");
+              if (hint) hint.textContent = `A 6-digit code was sent to ${email}`;
+              // ── DEV MODE: auto-fill OTP boxes when server returns dev_otp ─────
+              if (json.dev_otp) {
+                json.dev_otp.split("").forEach((d, i) => {
+                  const inp = document.getElementById(`otp-d${i}`);
+                  if (inp) inp.value = d;
+                });
+                setOk("otp-ok", `🔧 Dev mode — OTP auto-filled: ${json.dev_otp}`);
+              }
+              showStep("step-otp");
+            } else {
+              setErr("email-err", json.message);
+            }
+          } catch {
+            setErr("email-err", "Cannot reach server. Is Flask running on port 5000?");
+          } finally {
+            setLoading("btn-email-submit", false, "Send Verification Code");
+          }
+        });
+      }
+
+      /* ── Phone Registration ─────────────────────────────────────────── */
+      const phoneSubmit = document.getElementById("btn-phone-submit");
+      if (phoneSubmit) {
+        phoneSubmit.addEventListener("click", async () => {
+          setErr("phone-err", "");
+          const phone = document.getElementById("phone-num").value.trim();
+          const password = document.getElementById("phone-password").value;
+          const username = document.getElementById("phone-name").value.trim();
+
+          if (!phone) { setErr("phone-err", "Phone number is required."); return; }
+          if (password.length < 8) { setErr("phone-err", "Password must be at least 8 characters."); return; }
+          if (!/\d/.test(password)) { setErr("phone-err", "Password must contain at least one number."); return; }
+
+          setLoading("btn-phone-submit", true, "Send OTP");
+          try {
+            const res = await fetch(`${API}/auth/register/phone`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({ phone, password, username }),
+            });
+            const json = await res.json();
+
+            if (json.success) {
+              currentUserId = json.user_id;
+              currentOtpType = "phone";
+              buildOtpBoxes();
+              setErr("otp-err", ""); setOk("otp-ok", "");
+              const hint = document.getElementById("otp-hint");
+              if (hint) hint.textContent = `A 6-digit OTP was sent to ${phone}`;
+              // ── DEV MODE: auto-fill OTP boxes when server returns dev_otp ─────
+              if (json.dev_otp) {
+                json.dev_otp.split("").forEach((d, i) => {
+                  const inp = document.getElementById(`otp-d${i}`);
+                  if (inp) inp.value = d;
+                });
+                setOk("otp-ok", `🔧 Dev mode — OTP auto-filled: ${json.dev_otp}`);
+              }
+              showStep("step-otp");
+            } else {
+              setErr("phone-err", json.message);
+            }
+          } catch {
+            setErr("phone-err", "Cannot reach server. Is Flask running on port 5000?");
+          } finally {
+            setLoading("btn-phone-submit", false, "Send OTP");
+          }
+        });
+      }
+
+      /* ── OTP Verification ───────────────────────────────────────────── */
+      const otpVerify = document.getElementById("btn-otp-verify");
+      if (otpVerify) {
+        otpVerify.addEventListener("click", async () => {
+          setErr("otp-err", ""); setOk("otp-ok", "");
+          const code = getOtp();
+          if (code.length < 6) { setErr("otp-err", "Please enter all 6 digits."); return; }
+          if (!currentUserId) { setErr("otp-err", "Session lost – please restart."); return; }
+
+          setLoading("btn-otp-verify", true, "Verify Code");
+          try {
+            const endpoint = currentOtpType === "email"
+              ? `${API}/auth/verify/email`
+              : `${API}/auth/verify/phone`;
+
+            const res = await fetch(endpoint, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({ user_id: currentUserId, code }),
+            });
+            const json = await res.json();
+
+            if (json.success) {
+              setOk("otp-ok", "✓ Verified! Checking your profile…");
+              sessionStorage.setItem("mm_just_logged_in", "1");
+              
+              // Check if profile exists; redirect accordingly
+              try {
+                 const pr = await window.MealMatrix.fetchWithRetry(`${API}/auth/profile`, { credentials: "include" });
+                 const pjson = await pr.json();
+                 if (pjson && pjson.profile) {
+                   window.location.href = "/pages/home.html";
+                 } else {
+                   window.location.href = "/pages/profile.html";
+                 }
+              } catch (e) {
+                 window.location.href = "/pages/profile.html";
+              }
+            } else {
+              setErr("otp-err", json.message);
+            }
+          } catch {
+            setErr("otp-err", "Cannot reach server. Is Flask running on port 5000?");
+          } finally {
+            setLoading("btn-otp-verify", false, "Verify Code");
+          }
+        });
+      }
+
+      /* ── Resend OTP ─────────────────────────────────────────────────── */
+      const resendBtn = document.getElementById("btn-resend");
+      if (resendBtn) {
+        resendBtn.addEventListener("click", async () => {
+          setErr("otp-err", ""); setOk("otp-ok", "");
+          if (!currentUserId || !currentOtpType) return;
+          try {
+            const res = await fetch(`${API}/auth/resend-otp`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({ user_id: currentUserId, type: currentOtpType }),
+            });
+            const json = await res.json();
+            if (json.success) {
+              setOk("otp-ok", json.message);
+              // ── DEV MODE: auto-fill new OTP on resend ────────────────────────
+              if (json.dev_otp) {
+                // Clear and refill boxes with new code
+                for (let i = 0; i < 6; i++) {
+                  const inp = document.getElementById(`otp-d${i}`);
+                  if (inp) inp.value = json.dev_otp[i] || "";
+                }
+                setOk("otp-ok", `🔧 Dev mode — new OTP auto-filled: ${json.dev_otp}`);
+              }
+            } else {
+              setErr("otp-err", json.message);
+            }
+          } catch {
+            setErr("otp-err", "Cannot reach server.");
+          }
+        });
+      }
+
+      /* Pre-build OTP boxes so inputs exist */
+      buildOtpBoxes();
+    })();
+  </script>
+</body>
+
+</html>

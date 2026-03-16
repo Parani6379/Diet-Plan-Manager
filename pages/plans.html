@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plans - MealMatrix</title>
+  <link rel="stylesheet" href="../src/styles.css" />
+  <style>
+    /* Auth-aware header additions – no layout changes */
+    .mm-user-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #00d26a;
+      background: rgba(0, 210, 106, 0.1);
+      border: 1.5px solid rgba(0, 210, 106, 0.3);
+      border-radius: 20px;
+      padding: 6px 14px;
+    }
+
+    .mm-logout-btn {
+      font-size: 13px;
+      color: #e53e3e;
+      background: none;
+      border: 1.5px solid #e53e3e;
+      border-radius: 20px;
+      padding: 6px 14px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background .2s;
+    }
+
+    .mm-logout-btn:hover {
+      background: rgba(229, 62, 62, 0.08);
+    }
+
+    #header-auth {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Fix: override SPA hide-by-default rule */
+    #screen-plans {
+      display: block !important;
+    }
+
+    /* ── MM logo dot (overrides styles.css) ── */
+    .mm-logo-icon {
+      position: relative;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 0%, #b1f4cf, #22c55e);
+      box-shadow: 0 2px 10px rgba(34, 197, 94, 0.4);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .mm-logo-icon::after {
+      content: 'MM';
+      position: absolute;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.58rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.03em;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Content area */
+    .mm-simple-page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    .mm-simple-page h2 {
+      font-size: 1.8rem;
+      color: #1f2933;
+      margin-bottom: 8px;
+    }
+
+    .mm-simple-page>p {
+      color: #6b7280;
+      font-size: 0.95rem;
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="mm-app">
+    <!-- SHARED HEADER (design unchanged, login btn now auth-aware) -->
+    <header class="mm-header">
+      <a href="/" class="mm-logo" style="text-decoration:none;">
+        <span class="mm-logo-icon"></span>
+        <span class="mm-logo-text">MealMatrix</span>
+      </a>
+      <nav class="mm-nav">
+        <a href="/" class="mm-nav-link">Home</a>
+        <a href="/pages/plans.html" class="mm-nav-link mm-nav-link--active">Plans</a>
+        <a href="/pages/about.html" class="mm-nav-link">About</a>
+        <a href="/pages/help.html" class="mm-nav-link">Help</a>
+      </nav>
+      <div id="header-auth">
+        <a href="/pages/login.html" class="mm-login-btn" id="btn-header-login">Login</a>
+      </div>
+    </header>
+
+    <main class="mm-main">
+      <!-- PLANS SCREEN (design unchanged) -->
+      <section id="screen-plans" class="mm-screen mm-screen--active">
+        <div class="mm-simple-page">
+          <h2>Plans</h2>
+          <p>
+            This section can describe your subscription or meal plan tiers for
+            presentation.
+          </p>
+
+          <div style="margin-top:40px;padding:20px;background:rgba(0,210,106,0.1);border-radius:18px;">
+            <h3>Available Plans</h3>
+            <p>Choose the plan that best fits your needs:</p>
+
+            <div
+              style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:20px;">
+
+              <!-- Basic -->
+              <div style="padding:20px;border:2px solid #e7ecf3;border-radius:12px;">
+                <h4>Basic Plan</h4>
+                <p style="font-size:24px;color:#00d26a;font-weight:bold;">
+                  $9<span style="font-size:14px;">/month</span>
+                </p>
+                <ul style="text-align:left;">
+                  <li>✓ Basic meal plans</li>
+                  <li>✓ Nutrition tracking</li>
+                  <li>✓ Mobile access</li>
+                </ul>
+                <button class="mm-primary-btn" style="width:100%;margin-top:15px;" onclick="choosePlan('Basic')">Choose
+                  Plan</button>
+              </div>
+
+              <!-- Pro -->
+              <div style="padding:20px;border:3px solid #00d26a;border-radius:12px;background:rgba(0,210,106,0.05);">
+                <div style="text-align:center;background:#00d26a;color:#fff;
+                              padding:5px;border-radius:5px;margin-bottom:10px;font-size:12px;">
+                  Most Popular
+                </div>
+                <h4>Pro Plan</h4>
+                <p style="font-size:24px;color:#00d26a;font-weight:bold;">
+                  $19<span style="font-size:14px;">/month</span>
+                </p>
+                <ul style="text-align:left;">
+                  <li>✓ Advanced meal plans</li>
+                  <li>✓ Full nutrition analysis</li>
+                  <li>✓ Progress tracking</li>
+                  <li>✓ 24/7 support</li>
+                </ul>
+                <button class="mm-primary-btn" style="width:100%;margin-top:15px;" onclick="choosePlan('Pro')">Choose
+                  Plan</button>
+              </div>
+
+              <!-- Premium -->
+              <div style="padding:20px;border:2px solid #e7ecf3;border-radius:12px;">
+                <h4>Premium Plan</h4>
+                <p style="font-size:24px;color:#00d26a;font-weight:bold;">
+                  $29<span style="font-size:14px;">/month</span>
+                </p>
+                <ul style="text-align:left;">
+                  <li>✓ Everything in Pro</li>
+                  <li>✓ Personalized coaching</li>
+                  <li>✓ Custom recipes</li>
+                  <li>✓ Priority support</li>
+                </ul>
+                <button class="mm-primary-btn" style="width:100%;margin-top:15px;"
+                  onclick="choosePlan('Premium')">Choose Plan</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/src/auth-header.js"></script>
+  <script>
+    (() => {
+      const API = (window.MealMatrix && window.MealMatrix.apiBase) || "";
+
+      /* ── Plan selection – requires login ────────────────────────── */
+      window.choosePlan = async function (planName) {
+        try {
+          const res = await window.MealMatrix.fetchWithRetry(`${API}/auth/me`, { credentials: "include" });
+          const json = await res.json();
+          if (json && (json.success || json.user)) {
+            alert(`You selected the ${planName} Plan!\n\nPayment integration coming soon.`);
+          } else {
+            if (confirm(`You must be logged in to choose the ${planName} Plan.\n\nGo to Login?`)) {
+              window.location.href = "/pages/login.html";
+            }
+          }
+        } catch {
+          if (confirm("Please login to select a plan.\n\nGo to Login?")) {
+            window.location.href = "/pages/login.html";
+          }
+        }
+      };
+    })();
+  </script>
+</body>
+
+</html>

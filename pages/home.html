@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home – MealMatrix</title>
+    <meta name="description" content="Your personalized daily nutrition dashboard on MealMatrix." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #e7ecf3;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ── Header ── */
+        .mm-header {
+            height: 64px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 36px;
+            box-shadow: 0 1px 0 #e5e7eb;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .mm-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #1f2933;
+        }
+
+        .mm-logo-dot {
+            position: relative;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 20%, #b1f4cf, #22c55e);
+            box-shadow: 0 2px 10px rgba(34, 197, 94, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .mm-logo-dot::after {
+            content: 'MM';
+            position: absolute;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 0.62rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -0.03em;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .mm-user-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .mm-user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f59e0b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        /* ── Layout ── */
+        .mm-layout {
+            display: flex;
+            flex: 1;
+        }
+
+        /* ── Sidebar ── */
+        .mm-sidebar {
+            width: 160px;
+            background: #fff;
+            border-right: 1px solid #e5e7eb;
+            flex-shrink: 0;
+            padding-top: 16px;
+        }
+
+        .mm-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 18px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #374151;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            transition: background 0.15s;
+            border-left: 3px solid transparent;
+        }
+
+        .mm-nav-item:hover {
+            background: #f3f4f6;
+        }
+
+        .mm-nav-item.active {
+            background: #d1fae5;
+            border-left-color: #22c55e;
+            color: #166534;
+        }
+
+        .mm-nav-icon {
+            font-size: 1rem;
+        }
+
+        /* ── Main Content ── */
+        .mm-main {
+            flex: 1;
+            padding: 32px 36px;
+            overflow-y: auto;
+        }
+
+        .mm-welcome h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #1f2933;
+        }
+
+        .mm-welcome h1 em {
+            font-style: italic;
+            font-weight: 800;
+        }
+
+        .mm-welcome p {
+            font-size: 0.9rem;
+            font-style: italic;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        /* ── 3-col cards row ── */
+        .mm-cards-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-top: 28px;
+        }
+
+        .mm-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 22px 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .mm-card h2 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1f2933;
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        /* ── Nutrition Text Rows ── */
+        .mm-nutr-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 0;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 0.88rem;
+        }
+
+        .mm-nutr-row:last-child {
+            border-bottom: none;
+        }
+
+        .mm-nutr-label {
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .mm-nutr-value {
+            color: #166534;
+            font-weight: 700;
+        }
+
+        /* ── Today Plan Dropdown ── */
+        .mm-select-wrap {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .mm-select-wrap select {
+            width: 100%;
+            padding: 8px 36px 8px 12px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 999px;
+            background: #fff;
+            font-family: inherit;
+            font-size: 0.85rem;
+            color: #374151;
+            appearance: none;
+            cursor: pointer;
+            outline: none;
+            transition: border-color .15s;
+        }
+
+        .mm-select-wrap select:focus {
+            border-color: #22c55e;
+        }
+
+        .mm-select-arrow {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #6b7280;
+            font-size: 0.7rem;
+        }
+
+        /* ── Healthy Habits ── */
+        .mm-habit {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            font-size: 0.88rem;
+            color: #374151;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .mm-habit:last-child {
+            border-bottom: none;
+        }
+
+        .mm-habit-icon {
+            font-size: 1.2rem;
+        }
+
+        /* ── Fitness Tips Section ── */
+        .mm-section-title {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #1f2933;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin: 32px 0 16px;
+        }
+
+        .mm-tips-row {
+            display: grid;
+            grid-template-columns: 1fr 220px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .mm-tips-text {
+            font-size: 0.85rem;
+            color: #374151;
+            line-height: 1.7;
+        }
+
+        .mm-tips-img {
+            width: 100%;
+            height: 160px;
+            background: #d1d5db;
+            border-radius: 12px;
+            overflow: hidden;
+            object-fit: cover;
+        }
+
+        .mm-tips-img-placeholder {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, #e5e7eb, #d1fae5);
+            border-radius: 12px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .mm-cards-row {
+                grid-template-columns: 1fr;
+            }
+
+            .mm-tips-row {
+                grid-template-columns: 1fr;
+            }
+
+            .mm-sidebar {
+                width: 56px;
+            }
+
+            .mm-nav-item span:not(.mm-nav-icon) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="mm-header">
+        <a href="/" class="mm-logo">
+            <div class="mm-logo-dot"></div>
+            MealMatrix
+        </a>
+        <div class="mm-user-pill">
+            <span id="header-username">USER</span>
+            <div class="mm-user-avatar">👤</div>
+        </div>
+    </header>
+
+    <div class="mm-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="mm-sidebar">
+            <a href="/pages/home.html" class="mm-nav-item active" id="nav-home">
+                <span class="mm-nav-icon">🏠</span>
+                <span>Home</span>
+            </a>
+            <a href="/pages/dashboard.html" class="mm-nav-item" id="nav-dashboard">
+                <span class="mm-nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="/pages/weekly-plan.html" class="mm-nav-item" id="nav-weekly">
+                <span class="mm-nav-icon">📅</span>
+                <span>Weekly Plan</span>
+            </a>
+            <a href="/pages/profile.html" class="mm-nav-item" id="nav-profile">
+                <span class="mm-nav-icon">👤</span>
+                <span>Profile</span>
+            </a>
+            <a href="#" class="mm-nav-item" id="nav-logout" onclick="handleLogout(event)">
+                <span class="mm-nav-icon">🚪</span>
+                <span>Log Out</span>
+            </a>
+        </aside>
+
+
+        <!-- MAIN -->
+        <main class="mm-main">
+
+            <!-- Welcome -->
+            <div class="mm-welcome">
+                <h1>Welcome Back, <em id="welcome-name">USER !</em></h1>
+                <p>Here is your Todays / This Week plans</p>
+            </div>
+
+            <!-- Start Plan Banner (shown until user completes profile) -->
+            <div id="start-plan-banner" style="
+                display:none;
+                background: linear-gradient(135deg,#16a34a,#15803d);
+                border-radius:14px;
+                padding:16px 24px;
+                margin-bottom:20px;
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                gap:16px;
+                box-shadow:0 4px 20px rgba(34,197,94,0.3);
+            ">
+                <div>
+                    <div style="font-weight:800;font-size:1rem;color:#fff;">🥗 Set Up Your Diet Plan</div>
+                    <div style="font-size:0.82rem;color:rgba(255,255,255,0.8);margin-top:3px;">
+                        Fill in your profile to get personalised nutrition targets &amp; a weekly meal plan.
+                    </div>
+                </div>
+                <a href="/pages/profile.html" style="
+                    background:#fff;
+                    color:#16a34a;
+                    font-weight:800;
+                    font-size:0.8rem;
+                    letter-spacing:0.05em;
+                    text-transform:uppercase;
+                    padding:10px 22px;
+                    border-radius:999px;
+                    white-space:nowrap;
+                    text-decoration:none;
+                    transition:opacity .15s;
+                " onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                    Start Now →
+                </a>
+            </div>
+
+            <!-- 3 Cards -->
+            <div class="mm-cards-row">
+
+                <!-- Daily Nutrition -->
+                <div class="mm-card">
+                    <h2>Daily Nutrition</h2>
+                    <div class="mm-nutr-row">
+                        <span class="mm-nutr-label">Kcal</span>
+                        <span class="mm-nutr-value" id="lbl-kcal">— kcal</span>
+                    </div>
+                    <div class="mm-nutr-row">
+                        <span class="mm-nutr-label">Protein</span>
+                        <span class="mm-nutr-value" id="lbl-protein">— g</span>
+                    </div>
+                    <div class="mm-nutr-row">
+                        <span class="mm-nutr-label">Carbs</span>
+                        <span class="mm-nutr-value" id="lbl-carbs">— g</span>
+                    </div>
+                    <div class="mm-nutr-row">
+                        <span class="mm-nutr-label">Fat</span>
+                        <span class="mm-nutr-value" id="lbl-fat">— g</span>
+                    </div>
+                </div>
+
+                <!-- Today Plan -->
+                <div class="mm-card">
+                    <h2>Today Plan</h2>
+                    <div class="mm-select-wrap">
+                        <select id="meal-select" onchange="updateTodayPlan()">
+                            <option value="breakfast">Breakfast</option>
+                            <option value="lunch">Lunch</option>
+                            <option value="dinner">Dinner</option>
+                            <option value="snacks">Snacks</option>
+                        </select>
+                        <span class="mm-select-arrow">▼</span>
+                    </div>
+                    <div class="mm-nutr-row">
+                        <span class="mm-nutr-label">Kcal</span>
+                        <span class="mm-nutr-value" id="tp-kcal">— kcal</span>
+                    </div>
+                    <div class="mm-nutr-row">
+                        <span class="mm-nutr-label">Protein</span>
+                        <span class="mm-nutr-value" id="tp-protein">— g</span>
+                    </div>
+                    <div class="mm-nutr-row">
+                        <span class="mm-nutr-label">Carbs</span>
+                        <span class="mm-nutr-value" id="tp-carbs">— g</span>
+                    </div>
+                    <div class="mm-nutr-row">
+                        <span class="mm-nutr-label">Fat</span>
+                        <span class="mm-nutr-value" id="tp-fat">— g</span>
+                    </div>
+                </div>
+
+                <!-- Healthy Habits -->
+                <div class="mm-card">
+                    <h2>Healthy Habits</h2>
+                    <div class="mm-habit">
+                        <span class="mm-habit-icon">💧</span>
+                        <span>Hydration 6 litrs</span>
+                    </div>
+                    <div class="mm-habit">
+                        <span class="mm-habit-icon">🌙</span>
+                        <span>Sleep 7-8 hours</span>
+                    </div>
+                    <div class="mm-habit">
+                        <span class="mm-habit-icon">🚶</span>
+                        <span>Steps - 10000 steps</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Fitness Tips -->
+            <h2 class="mm-section-title">Fitness Nutrition Tips</h2>
+            <div class="mm-tips-row">
+                <p class="mm-tips-text">
+                    Maintaining a healthy lifestyle requires a balance between proper nutrition and regular physical
+                    activity. Eating a well-balanced diet that includes proteins, carbohydrates, healthy fats, vitamins,
+                    and minerals helps the body function efficiently and supports muscle growth and recovery.
+                    Drinking enough water throughout the day is essential to stay hydrated and maintain energy
+                    levels during workouts.
+                </p>
+                <div class="mm-tips-img-placeholder"></div>
+                <p class="mm-tips-text">
+                    Regular exercise, including both strength and cardiovascular activities, improves overall
+                    fitness, builds endurance, and helps maintain a healthy weight. It is also important to get enough
+                    sleep and allow the body to rest so that muscles can recover and grow. By combining consistent
+                    workouts, healthy food choices, and proper hydration, individuals can improve their performance
+                    and maintain long-term health and wellness.
+                </p>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="/src/auth-header.js" data-protected="true"></script>
+    <script>
+        (() => {
+            const API = window.MealMatrix.apiBase;
+            const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const MEALS = ["Breakfast", "Lunch", "Dinner", "Snacks"];
+
+            /* ── Load user info & stats ───────────────────────────────────── */
+            async function loadData() {
+                // 1. Fetch Body Needs (Targets)
+                let targets = { kcal: 2000, protein: 150, carbs: 150, fat: 50 };
+                try {
+                    const nr = await window.MealMatrix.fetchWithRetry(`${API}/auth/body-needs`, { credentials: "include" });
+                    const banner = document.getElementById("start-plan-banner");
+                    if (!nr || !nr.ok) {
+                        if (banner) banner.style.display = "flex";   // no profile yet
+                    } else {
+                        if (banner) banner.style.display = "none";
+                        const n = await nr.json();
+                        targets = {
+                            kcal: n.kcal ?? 2000,
+                            protein: n.protein ?? 150,
+                            carbs: n.carbs ?? 150,
+                            fat: n.fat ?? 50,
+                        };
+                    }
+                } catch { /* keep defaults */ }
+
+                // 2. Fetch Today's Progress from Weekly Plan
+                let todayPct = 0;
+                let todayDone = false;
+                try {
+                    const wr = await window.MealMatrix.fetchWithRetry(`${API}/auth/weekly-plan`, { credentials: "include" });
+                    if (wr && wr.ok) {
+                        const { plan } = await wr.json();
+                        const todayName = DAY_NAMES[new Date().getDay()];
+                        const dayData = plan?.[todayName];
+                        if (dayData) {
+                            todayDone = !!dayData.done;
+                            const checks = dayData.checks || {};
+                            const ticked = MEALS.filter(m => checks[m] || checks[m.toLowerCase()]).length;
+                            todayPct = Math.round((ticked / MEALS.length) * 100);
+                        }
+                    }
+                } catch { /* no plan yet */ }
+
+                // 3. Compute consumed values
+                const consumed = {
+                    kcal: Math.round(targets.kcal * todayPct / 100),
+                    protein: Math.round(targets.protein * todayPct / 100),
+                    carbs: Math.round(targets.carbs * todayPct / 100),
+                    fat: Math.round(targets.fat * todayPct / 100),
+                };
+
+                // 4. Update UI
+                const updateEl = (id, val) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = val;
+                };
+
+                updateEl("lbl-kcal", `${consumed.kcal} kcal`);
+                updateEl("lbl-protein", `${consumed.protein} g`);
+                updateEl("lbl-carbs", `${consumed.carbs} g`);
+                updateEl("lbl-fat", `${consumed.fat} g`);
+
+                const colour = todayDone ? "#16a34a" : "#166534";
+                const setTp = (id, val) => {
+                    const el = document.getElementById(id);
+                    if (el) { el.textContent = val; el.style.color = colour; }
+                };
+                setTp("tp-kcal", `${consumed.kcal} kcal`);
+                setTp("tp-protein", `${consumed.protein} g`);
+                setTp("tp-carbs", `${consumed.carbs} g`);
+                setTp("tp-fat", `${consumed.fat} g`);
+            }
+
+            // The header name is already handled by auth-header.js (welcome-name or header-username)
+            loadData();
+        })();
+    </script>
+</body>
+
+</html>
